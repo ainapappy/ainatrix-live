@@ -7,12 +7,12 @@
 
 declare(strict_types=1);
 
-namespace Ainatrix\SocialSettings;
+namespace AinatrixLive\SocialSettings;
 
-use Ainatrix\Providers\ProviderConfig;
-use Ainatrix\Providers\ProviderInterface;
-use Ainatrix\Providers\ProviderRegistry;
-use Ainatrix\Providers\Secrets;
+use AinatrixLive\Providers\ProviderConfig;
+use AinatrixLive\Providers\ProviderInterface;
+use AinatrixLive\Providers\ProviderRegistry;
+use AinatrixLive\Providers\Secrets;
 
 if (!defined('ABSPATH')) {
     exit;

@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace Ainatrix\Hooks;
+namespace AinatrixLive\Hooks;
 
 if (!defined('ABSPATH')) {
     exit;

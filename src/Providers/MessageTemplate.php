@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace Ainatrix\Providers;
+namespace AinatrixLive\Providers;
 
 if (!defined('ABSPATH')) {
     exit;

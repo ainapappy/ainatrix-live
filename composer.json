@@ -2,7 +2,7 @@
     "name": "pappy/ainatrix-live",
     "autoload": {
         "psr-4": {
-            "Ainatrix\\": "src/"
+            "AinatrixLive\\": "src/"
         }
     },
     "authors": [

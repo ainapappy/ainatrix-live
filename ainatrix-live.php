@@ -22,7 +22,7 @@ if (!defined('ABSPATH')) {
 
 define('AIX_LIVE_URL', plugin_dir_url(__FILE__));
 
-// Code objet PSR-4 : classes du namespace Ainatrix\ dans src/.
+// Code objet PSR-4 : classes du namespace AinatrixLive\ dans src/.
 require_once __DIR__ . '/vendor/autoload.php';
 
 // Variables d'environnement (.env à la racine du plugin, ignoré par git).
@@ -40,4 +40,4 @@ foreach (scandir($dir) as $filename) {
 }
 
 // Amorce la couche objet une fois les plugins chargés.
-add_action('plugins_loaded', ['Ainatrix\Plugin', 'boot']);
+add_action('plugins_loaded', ['AinatrixLive\Plugin', 'boot']);

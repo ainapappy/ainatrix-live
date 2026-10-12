@@ -7,10 +7,10 @@
 
 declare(strict_types=1);
 
-namespace Ainatrix\SocialSettings;
+namespace AinatrixLive\SocialSettings;
 
-use Ainatrix\Providers\MessageTemplate;
-use Ainatrix\Providers\Secrets;
+use AinatrixLive\Providers\MessageTemplate;
+use AinatrixLive\Providers\Secrets;
 
 if (!defined('ABSPATH')) {
     exit;

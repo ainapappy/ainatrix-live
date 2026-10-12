@@ -7,9 +7,9 @@
 
 declare(strict_types=1);
 
-namespace Ainatrix\SocialSettings;
+namespace AinatrixLive\SocialSettings;
 
-use Ainatrix\Providers\ProviderConfig;
+use AinatrixLive\Providers\ProviderConfig;
 
 if (!defined('ABSPATH')) {
     exit;

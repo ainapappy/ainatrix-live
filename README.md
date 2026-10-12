@@ -63,7 +63,7 @@ Une idée, un besoin spécifique ? [Contactez-moi](https://www.ainatrix.com) —
 ```
 ainatrix-live/
 ├── ainatrix-live.php   # Bootstrap du plugin (constantes, autoload, glue)
-├── src/                # Classes PSR-4 (namespace Ainatrix\)
+├── src/                # Classes PSR-4 (namespace AinatrixLive\)
 ├── inc/                # Couche procédurale résiduelle
 └── languages/          # Traductions (.pot, .po, .mo)
 ```

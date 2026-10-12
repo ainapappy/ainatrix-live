@@ -7,10 +7,10 @@
 
 declare(strict_types=1);
 
-namespace Ainatrix;
+namespace AinatrixLive;
 
-use Ainatrix\Hooks\HookLoader;
-use Ainatrix\SocialSettings\SocialSettingsHooks;
+use AinatrixLive\Hooks\HookLoader;
+use AinatrixLive\SocialSettings\SocialSettingsHooks;
 
 if (!defined('ABSPATH')) {
     exit;

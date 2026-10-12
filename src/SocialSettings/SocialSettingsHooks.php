@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace Ainatrix\SocialSettings;
+namespace AinatrixLive\SocialSettings;
 
-use Ainatrix\Hooks\HookSubscriberInterface;
-use Ainatrix\Providers\ProviderException;
-use Ainatrix\Providers\ProviderRegistry;
+use AinatrixLive\Hooks\HookSubscriberInterface;
+use AinatrixLive\Providers\ProviderException;
+use AinatrixLive\Providers\ProviderRegistry;
 
 if (!defined('ABSPATH')) {
     exit;
