@@ -1,5 +1,6 @@
 # Outils de développement / IA
 .claude/
+.knowledge/
 .vscode/
 CLAUDE.md
 .idea/
