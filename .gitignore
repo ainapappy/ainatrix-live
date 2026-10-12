@@ -1,0 +1,24 @@
+# Outils de développement / IA
+.claude/
+.vscode/
+CLAUDE.md
+.idea/
+
+# Dépendances (réinstallables via composer install)
+vendor/
+
+# Dépendances JS
+node_modules/
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Journaux et temporaires
+*.log
+*.tmp
+
+# Environnement
+.env
+.env.*

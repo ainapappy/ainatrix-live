@@ -1,0 +1,15 @@
+{
+    "name": "pappy/ainatrix-live",
+    "autoload": {
+        "psr-4": {
+            "Ainatrix\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Aina Papy",
+            "email": "ainapappy@gmail.com"
+        }
+    ],
+    "require": {}
+}
