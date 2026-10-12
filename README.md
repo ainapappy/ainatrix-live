@@ -4,7 +4,7 @@
 
 `ainatrix live` est une extension WordPress qui connecte votre site à vos réseaux sociaux : Facebook, LinkedIn, TikTok, Instagram et plus. Rédigez votre article, cliquez sur le bouton de publication — ou laissez les workflows planifiés le faire pour vous, à l'heure que vous avez choisie.
 
-Conçu et maintenu par [Ainatrix](https://www.ainatrix.com) — développeur web freelance spécialisé WordPress, Laravel et Java.
+Conçu et maintenu par [Ainatrix](https://www.ainatrix.com) — développeur web freelance spécialisé WordPress, Laravel et Python.
 
 ---
 
@@ -22,20 +22,20 @@ Publier sur les réseaux sociaux à chaque nouvel article, c'est répétitif et 
 
 ## 🚀 Fonctionnalités
 
-| Fonctionnalité | Description |
-|---|---|
-| Publication manuelle | Bouton direct dans l'éditeur et sur la liste des articles |
-| Publication automatique | Déclenchement à la publication d'un article ou planifiée |
-| Multi-comptes | Connectez plusieurs comptes par réseau social |
-| File d'attente | Les publications sont mises en file et traitées en arrière-plan |
-| Journal des envois | Suivez le statut de chaque publication (succès, échec, retry) |
-| i18n | Entièrement traduisible (text domain `ainatrix`) |
+| Fonctionnalité          | Description                                                     |
+| ----------------------- | --------------------------------------------------------------- |
+| Publication manuelle    | Bouton direct dans l'éditeur et sur la liste des articles       |
+| Publication automatique | Déclenchement à la publication d'un article ou planifiée        |
+| Multi-comptes           | Connectez plusieurs comptes par réseau social                   |
+| File d'attente          | Les publications sont mises en file et traitées en arrière-plan |
+| Journal des envois      | Suivez le statut de chaque publication (succès, échec, retry)   |
+| i18n                    | Entièrement traduisible (text domain `ainatrix`)                |
 
 ## 🛠️ Installation
 
 1. Téléchargez ou clonez ce dépôt dans `wp-content/plugins/ainatrix-live` :
    ```bash
-   git clone https://github.com/<votre-compte>/ainatrix-live.git wp-content/plugins/ainatrix-live
+   git clone https://github.com/ainapappy/ainatrix-live wp-content/plugins/ainatrix-live
    ```
 2. Installez les dépendances PHP :
    ```bash
@@ -74,13 +74,13 @@ Le plugin suit un pattern strict de classes de hooks (`src/{Feature}/{Feature}Ho
 
 Ce plugin est développé et maintenu par **Ainatrix**, studio d'un développeur web freelance.
 
-Besoin d'un plugin sur mesure, d'un site WordPress qui vous ressemble, d'une application Laravel ou d'un développement Java ? J'accompagne les indépendants, les TPE et les agences de la conception à la mise en production.
+Besoin d'un plugin sur mesure, d'un site WordPress qui vous ressemble, d'une application Laravel ou d'un développement Python ? J'accompagne les indépendants, les TPE et les agences de la conception à la mise en production.
 
 - 🌍 Site & portfolio : **[ainatrix.com](https://www.ainatrix.com)**
-- 🛠️ Expertises : **WordPress · Laravel · Java**
+- 🛠️ Expertises : **WordPress · Laravel · Python**
 - 📬 Contact & devis : **[ainatrix.com](https://www.ainatrix.com)**
 
-> Un plugin qui vous plaît mais qui manque d'une fonctionnalité ? Ouvrez une *issue* — ou parlons-en directement.
+> Un plugin qui vous plaît mais qui manque d'une fonctionnalité ? Ouvrez une _issue_ — ou parlons-en directement.
 
 ## 📄 Licence
 
