@@ -42,7 +42,9 @@
   border-bottom-color: var(--aix-accent);
   font-weight: 600;
 }
-.aix-settings .tab .ico { font-size: 17px; line-height: 1; }
+.aix-settings .tab .ico { font-size: 17px; line-height: 1; display: inline-flex; align-items: center; }
+.aix-settings .ico .brand-icon { display: block; }
+.aix-settings .panel-head h2 .ico { display: inline-flex; align-items: center; }
 .aix-settings .tab .badge {
   font-size: 10px; font-weight: 600; text-transform: uppercase;
   padding: 1px 7px; border-radius: 999px;
