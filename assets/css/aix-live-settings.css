@@ -106,10 +106,13 @@
 }
 .aix-settings .toggle-secret {
   appearance: none; background: none; border: none; cursor: pointer;
-  font-size: 12px; color: var(--aix-accent); padding: 0; text-decoration: underline;
+  color: var(--aix-text-muted); padding: 2px; display: flex; line-height: 1;
 }
-.aix-settings .secret-row { display: flex; gap: 8px; align-items: center; }
-.aix-settings .secret-row input { flex: 1; }
+.aix-settings .toggle-secret:hover { color: var(--aix-accent); }
+.aix-settings .toggle-secret .dashicons { font-size: 18px; width: 18px; height: 18px; }
+.aix-settings .secret-row { display: flex; gap: 8px; align-items: center; position: relative; }
+.aix-settings .secret-row input { flex: 1; padding-right: 34px; }
+.aix-settings .secret-row .toggle-secret { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); }
 
 /* ── Cases à cocher ──────────────────────────────── */
 .aix-settings .check { display: flex; gap: 9px; align-items: flex-start; }

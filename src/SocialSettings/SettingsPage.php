@@ -203,7 +203,9 @@ final class SettingsPage {
                        value="" autocomplete="off"
                        placeholder="<?php echo $set ? esc_attr__('••••••••••••', 'ainatrix') : ''; ?>"
                        <?php echo $set ? '' : ' class="missing"'; ?>>
-                <button type="button" class="toggle-secret" data-target="<?php echo esc_attr($id); ?>"><?php esc_html_e('Afficher', 'ainatrix'); ?></button>
+                <button type="button" class="toggle-secret" data-target="<?php echo esc_attr($id); ?>" aria-label="<?php esc_attr_e('Afficher ou masquer', 'ainatrix'); ?>">
+                    <span class="dashicons dashicons-visibility" aria-hidden="true"></span>
+                </button>
             </div>
             <span class="hint">
                 <span class="env-tag"><?php echo esc_html($envName); ?></span> —

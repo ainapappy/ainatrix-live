@@ -44,12 +44,13 @@ jQuery(function ($) {
     if (saved && $('#panel-' + saved).length) { activate(saved); }
   } catch (e) { /* ignorer */ }
 
-  /* ── Afficher / masquer les champs .env ── */
+  /* ── Afficher / masquer les secrets (œil dans le champ) ── */
   $(document).on('click', '.toggle-secret', function () {
     var $input = $('#' + $(this).data('target'));
+    var $icon = $(this).find('.dashicons');
     var show = $input.attr('type') === 'password';
     $input.attr('type', show ? 'text' : 'password');
-    $(this).text(show ? 'Masquer' : 'Afficher');
+    $icon.toggleClass('dashicons-visibility', !show).toggleClass('dashicons-hidden', show);
   });
 
   /* ── Confirmation d'enregistrement (retour de admin-post) ── */
