@@ -52,7 +52,9 @@ final class SocialSettingsHooks implements HookSubscriberInterface {
             'manage_options',
             self::PAGE_SLUG,
             [$this, 'renderPage'],
-            'dashicons-share'
+            'dashicons-share',
+            // Position 3 : tout en haut du menu, juste avant « Articles » (position 5).
+            3
         );
         add_submenu_page(
             self::PAGE_SLUG,
