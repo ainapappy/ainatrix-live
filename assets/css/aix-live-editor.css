@@ -1,0 +1,193 @@
+/**
+ * ainatrix live — panneau de publication sociale dans l'éditeur Gutenberg.
+ * Transcription de la maquette .knowledge/design/editor-social-panel.html,
+ * adaptée aux composants Gutenberg (PluginPostStatusInfo).
+ */
+
+.aix-live-social {
+	width: 100%;
+}
+
+/* ── En-tête compact : icône déclencheur + titre ─────── */
+
+.aix-live-trigger {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	width: 100%;
+	padding: 4px 6px;
+	min-height: 28px;
+	height: auto;
+	border-radius: 4px;
+	color: #757575;
+	font-weight: 500;
+	justify-content: flex-start;
+}
+
+.aix-live-trigger:hover:not(:disabled) {
+	color: #2271b1;
+	background: #f0f6fc;
+	box-shadow: none;
+}
+
+.aix-live-trigger.is-pressed,
+.aix-live-trigger.is-pressed:hover:not(:disabled) {
+	color: #fff;
+	background: #2271b1;
+}
+
+.aix-live-trigger__label {
+	font-size: 13px;
+	line-height: 1.4;
+}
+
+.aix-live-trigger svg {
+	flex: 0 0 auto;
+}
+
+/* ── Panneau déplié (état B) ─────────────────────────── */
+
+.aix-live-panel {
+	margin-top: 8px;
+}
+
+.aix-live-gradient-defs {
+	position: absolute;
+	width: 0;
+	height: 0;
+	overflow: hidden;
+}
+
+.aix-live-intro {
+	margin: 0 0 10px;
+	color: #757575;
+	font-size: 12px;
+}
+
+.aix-live-nets {
+	border-top: 1px solid #f0f0f0;
+}
+
+/* ── Ligne réseau ────────────────────────────────────── */
+
+.aix-net {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	padding: 9px 0;
+	border-bottom: 1px solid #f0f0f0;
+	cursor: pointer;
+}
+
+.aix-net:last-child {
+	border-bottom: none;
+}
+
+.aix-net__check {
+	margin: 3px 0 0;
+	width: 16px;
+	height: 16px;
+	accent-color: #2271b1;
+	flex: 0 0 auto;
+}
+
+.aix-net__ico {
+	flex: 0 0 auto;
+	display: inline-flex;
+	margin-top: 1px;
+}
+
+.aix-net__body {
+	flex: 1;
+	min-width: 0;
+}
+
+.aix-net__name {
+	display: block;
+	font-weight: 500;
+	color: #1e1e1e;
+}
+
+.aix-net__sub {
+	display: block;
+	color: #757575;
+	font-size: 11px;
+	overflow-wrap: break-word;
+}
+
+.aix-net__sub a {
+	color: #2271b1;
+	text-decoration: none;
+}
+
+.aix-net__sub a:hover,
+.aix-net__sub a:focus {
+	color: #135e96;
+	text-decoration: underline;
+}
+
+.aix-net--disabled {
+	opacity: 0.55;
+	cursor: not-allowed;
+}
+
+.aix-net--disabled .aix-net__name {
+	font-weight: 400;
+}
+
+/* ── Badges de configuration ─────────────────────────── */
+
+.aix-badge {
+	display: inline-block;
+	font-size: 10px;
+	font-weight: 600;
+	text-transform: uppercase;
+	padding: 1px 7px;
+	border-radius: 999px;
+	white-space: nowrap;
+	vertical-align: 1px;
+}
+
+.aix-badge--ok {
+	background: #edfaef;
+	color: #00a32a;
+	border: 1px solid #b8e6c2;
+}
+
+.aix-badge--todo {
+	background: #fcf0f1;
+	color: #d63638;
+	border: 1px solid #f0c8ca;
+}
+
+/* ── Actions : bouton de publication + aide de statut ── */
+
+.aix-live-actions {
+	margin-top: 12px;
+}
+
+.aix-live-publish {
+	width: 100%;
+	justify-content: center;
+}
+
+.aix-live-help {
+	display: flex;
+	gap: 6px;
+	align-items: flex-start;
+	margin: 8px 0 0;
+	font-size: 12px;
+	color: #757575;
+}
+
+.aix-live-help__dot {
+	flex: 0 0 auto;
+}
+
+.aix-live-help--warn {
+	color: #d63638;
+}
+
+.aix-live-help--ok {
+	color: #00a32a;
+}

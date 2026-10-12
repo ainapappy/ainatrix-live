@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace AinatrixLive;
 
+use AinatrixLive\EditorPanel\EditorPanelHooks;
 use AinatrixLive\Hooks\HookLoader;
 use AinatrixLive\SocialSettings\SocialSettingsHooks;
 
@@ -25,6 +26,7 @@ final class Plugin {
         // Enregistrer ici la classe de hooks de chaque fonctionnalité (src/{Feature}/).
         (new HookLoader(
             new SocialSettingsHooks(),
+            new EditorPanelHooks(),
         ))->register();
     }
 }
