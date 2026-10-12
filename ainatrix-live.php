@@ -25,6 +25,11 @@ define('AIX_LIVE_URL', plugin_dir_url(__FILE__));
 // Code objet PSR-4 : classes du namespace Ainatrix\ dans src/.
 require_once __DIR__ . '/vendor/autoload.php';
 
+// Variables d'environnement (.env à la racine du plugin, ignoré par git).
+if (class_exists(\Dotenv\Dotenv::class)) {
+    \Dotenv\Dotenv::createUnsafeImmutable(__DIR__)->safeLoad();
+}
+
 // Couche procédurale résiduelle : constantes et glue (chargement non récursif).
 $dir = __DIR__ . '/inc';
 foreach (scandir($dir) as $filename) {

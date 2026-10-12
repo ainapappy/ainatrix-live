@@ -1,0 +1,14 @@
+# Copyright (C) 2026 Aina Papy
+# This file is distributed under the GPL-3.0 license.
+msgid ""
+msgstr ""
+"Project-Id-Version: ainatrix live 2.16.0\n"
+"Report-Msgid-Bugs-To: https://www.ainatrix.com\n"
+"POT-Creation-Date: 2026-10-12 00:00+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Revision-Date: \n"
+"Language-Team: \n"
+"X-Generator: ainatrix-live\n"
+"X-Domain: ainatrix\n"
