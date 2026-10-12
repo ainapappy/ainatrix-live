@@ -1,0 +1,157 @@
+/*
+ * Page « Réseaux sociaux » — porté de la maquette
+ * .knowledge/design/social-networks-config.html, scoppé sous .aix-settings.
+ */
+
+.aix-settings {
+  --aix-bg: #f0f0f1;
+  --aix-surface: #ffffff;
+  --aix-border: #dcdcde;
+  --aix-text: #1d2327;
+  --aix-text-muted: #646970;
+  --aix-accent: #2271b1;
+  --aix-accent-hover: #135e96;
+  --aix-danger: #d63638;
+  --aix-success: #00a32a;
+  --aix-radius: 6px;
+  --aix-shadow: 0 1px 2px rgba(0, 0, 0, .06);
+  --aix-mono: Consolas, Monaco, "Courier New", monospace;
+
+  max-width: 880px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--aix-text);
+}
+
+/* ── En-tête ─────────────────────────────────────── */
+.aix-settings .page-title { display: flex; align-items: center; gap: 10px; margin: 0 0 4px; font-size: 22px; font-weight: 500; }
+.aix-settings .page-title .logo { font-weight: 700; color: var(--aix-accent); }
+.aix-settings .page-sub { margin: 0 0 20px; color: var(--aix-text-muted); }
+
+/* ── Onglets ─────────────────────────────────────── */
+.aix-settings .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--aix-border); flex-wrap: wrap; }
+.aix-settings .tab {
+  appearance: none; background: none; border: none; cursor: pointer;
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 16px; font: inherit; color: var(--aix-text-muted);
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+}
+.aix-settings .tab:hover { color: var(--aix-text); }
+.aix-settings .tab[aria-selected="true"] {
+  color: var(--aix-accent);
+  border-bottom-color: var(--aix-accent);
+  font-weight: 600;
+}
+.aix-settings .tab .ico { font-size: 17px; line-height: 1; }
+.aix-settings .tab .badge {
+  font-size: 10px; font-weight: 600; text-transform: uppercase;
+  padding: 1px 7px; border-radius: 999px;
+  background: #f0f0f1; color: var(--aix-text-muted); border: 1px solid var(--aix-border);
+}
+.aix-settings .tab .badge.on { background: #edfaef; color: var(--aix-success); border-color: #b8e6c2; }
+
+/* ── Panneaux ────────────────────────────────────── */
+.aix-settings .panel {
+  background: var(--aix-surface);
+  border: 1px solid var(--aix-border);
+  border-top: none;
+  border-radius: 0 0 var(--aix-radius) var(--aix-radius);
+  box-shadow: var(--aix-shadow);
+  padding: 28px;
+}
+
+.aix-settings .panel-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
+.aix-settings .panel-head h2 { margin: 0 0 4px; font-size: 16px; display: flex; align-items: center; gap: 8px; }
+.aix-settings .panel-head h2 .ico { font-size: 17px; }
+.aix-settings .panel-head p { margin: 0; color: var(--aix-text-muted); }
+.aix-settings .panel-head p code { color: inherit; }
+
+.aix-settings .status {
+  display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 999px;
+}
+.aix-settings .status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; }
+.aix-settings .status.ok { background: #edfaef; color: var(--aix-success); }
+.aix-settings .status.ok::before { background: var(--aix-success); }
+.aix-settings .status.todo { background: #fcf0f1; color: var(--aix-danger); }
+.aix-settings .status.todo::before { background: var(--aix-danger); }
+
+/* ── Formulaire ──────────────────────────────────── */
+.aix-settings .section { margin-bottom: 28px; }
+.aix-settings .section-title {
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+  color: var(--aix-text-muted);
+  margin: 0 0 12px; padding-bottom: 6px; border-bottom: 1px solid var(--aix-border);
+}
+.aix-settings .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 20px; }
+.aix-settings .field { display: flex; flex-direction: column; gap: 5px; }
+.aix-settings .field.full { grid-column: 1 / -1; }
+.aix-settings .field label { font-weight: 600; font-size: 13px; }
+.aix-settings .field .hint { color: var(--aix-text-muted); font-size: 12px; }
+
+.aix-settings input[type="text"], .aix-settings input[type="password"], .aix-settings select {
+  width: 100%; max-width: 100%; padding: 7px 10px;
+  font: inherit; color: var(--aix-text); min-height: 0;
+  background: #fff; border: 1px solid var(--aix-border); border-radius: var(--aix-radius);
+}
+.aix-settings input:focus, .aix-settings select:focus { outline: 2px solid var(--aix-accent); outline-offset: -1px; }
+.aix-settings input.missing { border-color: var(--aix-danger); }
+.aix-settings input[type="password"] { font-family: var(--aix-mono); letter-spacing: 1px; }
+
+.aix-settings .env-tag {
+  display: inline-block; font-family: var(--aix-mono); font-size: 11px;
+  background: #f6f7f7; border: 1px solid var(--aix-border); border-radius: 4px;
+  padding: 1px 6px; color: var(--aix-text-muted);
+}
+.aix-settings .toggle-secret {
+  appearance: none; background: none; border: none; cursor: pointer;
+  font-size: 12px; color: var(--aix-accent); padding: 0; text-decoration: underline;
+}
+.aix-settings .secret-row { display: flex; gap: 8px; align-items: center; }
+.aix-settings .secret-row input { flex: 1; }
+
+/* ── Cases à cocher ──────────────────────────────── */
+.aix-settings .check { display: flex; gap: 9px; align-items: flex-start; }
+.aix-settings .check input { margin-top: 2px; }
+.aix-settings .check .lbl { font-weight: 600; }
+.aix-settings .check .sub { color: var(--aix-text-muted); font-weight: 400; display: block; }
+
+/* ── Boutons ─────────────────────────────────────── */
+.aix-settings .actions {
+  display: flex; gap: 10px; align-items: center; justify-content: flex-end;
+  border-top: 1px solid var(--aix-border); padding-top: 18px; margin-top: 4px;
+}
+.aix-settings .btn {
+  appearance: none; cursor: pointer; font: inherit;
+  padding: 7px 16px; border-radius: var(--aix-radius);
+  border: 1px solid var(--aix-accent); background: transparent; color: var(--aix-accent);
+}
+.aix-settings .btn:hover { background: #f0f6fc; }
+.aix-settings .btn.primary { background: var(--aix-accent); color: #fff; font-weight: 600; }
+.aix-settings .btn.primary:hover { background: var(--aix-accent-hover); }
+.aix-settings .btn:disabled { opacity: .5; cursor: default; }
+
+/* ── Note .env ───────────────────────────────────── */
+.aix-settings .env-note {
+  display: flex; gap: 10px;
+  background: #f6f7f7; border-left: 3px solid #dba617;
+  padding: 10px 14px; border-radius: 0 var(--aix-radius) var(--aix-radius) 0;
+  color: var(--aix-text-muted); font-size: 12px; margin-bottom: 24px;
+}
+
+/* ── Toast ───────────────────────────────────────── */
+#aix-toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+  background: var(--aix-text); color: #fff; padding: 10px 20px; border-radius: var(--aix-radius);
+  font-size: 13px; opacity: 0; transition: all .25s ease; pointer-events: none;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .25); z-index: 9999;
+}
+#aix-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+/* ── Téléphones ──────────────────────────────────── */
+@media (max-width: 600px) {
+  .aix-settings .grid { grid-template-columns: 1fr; }
+  .aix-settings .panel { padding: 16px; }
+  .aix-settings .panel-head { flex-direction: column; }
+}

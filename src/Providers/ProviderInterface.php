@@ -54,4 +54,11 @@ interface ProviderInterface {
      * Vérifie la connexion (bouton « Tester la connexion » de l'UI).
      */
     public function testConnection(): ProviderResult;
+
+    /**
+     * Défauts de configuration du réseau, pour l'UI de réglages.
+     *
+     * @return array<string, mixed>
+     */
+    public function defaultSettings(): array;
 }

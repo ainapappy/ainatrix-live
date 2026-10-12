@@ -1,6 +1,6 @@
 <?php
 /**
- * Provider LinkedIn — publication via l'API UGC Posts.
+ * Provider LinkedIn — publication via l'API Posts (versionnée, /rest/posts).
  *
  * @package ainatrix
  */
@@ -14,17 +14,25 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Partage de texte : POST /v2/ugcPosts. L'app LinkedIn doit avoir les produits
- * « Share on LinkedIn » et « Sign In with LinkedIn » approuvés.
+ * Partage de texte : POST /rest/posts (API Posts, en-tête LinkedIn-Version).
+ * L'app LinkedIn doit avoir « Community Management API » (publication sur une
+ * page entreprise, scope w_organization_social) et/ou « Share on LinkedIn »
+ * (profil personnel, scope w_member_social) approuvés.
  *
- * Secrets (.env) : AIX_LIVE_LINKEDIN_ACCESS_TOKEN, AIX_LIVE_LINKEDIN_CLIENT_SECRET.
- * Publication sur la page entreprise si le champ org_id est renseigné,
- * sinon sur le profil personnel (URN résolu via /v2/userinfo).
+ * Secrets (.env) : AIX_LIVE_LINKEDIN_ACCESS_TOKEN (token OAuth ~60 jours),
+ * AIX_LIVE_LINKEDIN_CLIENT_SECRET. Publication sur la page entreprise si le
+ * champ org_id est renseigné, sinon sur le profil personnel.
  */
 final class LinkedInProvider extends AbstractProvider {
 
     /** URL de base de l'API LinkedIn. */
-    private const API_BASE = 'https://api.linkedin.com/v2';
+    private const API_BASE = 'https://api.linkedin.com';
+
+    /** Version de l'API Posts par défaut (format AAAAMM, support ~12 mois). */
+    private const DEFAULT_VERSION = '202601';
+
+    /** Version du protocole Rest.li exigée par l'API Posts. */
+    private const RESTLI_PROTOCOL_VERSION = '2.0.0';
 
     /** Limite du texte d'un post LinkedIn. */
     private const MAX_MESSAGE_LENGTH = 3000;
@@ -39,9 +47,14 @@ final class LinkedInProvider extends AbstractProvider {
 
     public function testConnection(): ProviderResult {
         try {
-            $profile = $this->request('GET', self::API_BASE . '/userinfo', [], $this->authHeaders());
+            $profile = $this->request('GET', $this->apiBase() . '/rest/me', [], $this->apiHeaders());
         } catch (ProviderException $exception) {
-            return ProviderResult::failure($exception->getMessage(), $exception->httpCode());
+            // Repli : l'endpoint OIDC userinfo si /rest/me n'est pas accessible au token.
+            try {
+                $profile = $this->request('GET', $this->apiBase() . '/userinfo', [], $this->apiHeaders());
+            } catch (ProviderException $fallbackException) {
+                return ProviderResult::failure($fallbackException->getMessage(), $fallbackException->httpCode());
+            }
         }
 
         return ProviderResult::success((string) ($profile['sub'] ?? ''));
@@ -49,21 +62,21 @@ final class LinkedInProvider extends AbstractProvider {
 
     protected function doPublish(PostPayload $payload, string $message): ProviderResult {
         $token = $this->secret('ACCESS_TOKEN');
-        $data = $this->request('POST', self::API_BASE . '/ugcPosts', [
-            'author'          => $this->authorUrn($token),
-            'commentary'      => $message,
-            'lifecycleState'  => 'PUBLISHED',
-            'visibility'      => [
-                'com.linkedin.ugc.MemberNetworkVisibility' => $this->visibility(),
+        $this->request('POST', $this->apiBase() . '/rest/posts', [
+            'author'       => $this->authorUrn($token),
+            'commentary'   => $this->escapeLittleText($message),
+            'visibility'   => $this->visibility(),
+            'distribution' => [
+                'feedDistribution'               => 'MAIN_FEED',
+                'targetEntities'                 => [],
+                'thirdPartyDistributionChannels' => [],
             ],
-            'specificContent' => [
-                'com.linkedin.ugc.ShareContent' => [
-                    'shareMediaCategory' => 'NONE',
-                ],
-            ],
-        ], ['Authorization' => 'Bearer ' . $token], true);
+            'lifecycleState'            => 'PUBLISHED',
+            'isReshareDisabledByAuthor' => false,
+        ], $this->apiHeaders($token), true);
 
-        $remoteId = (string) ($data['id'] ?? '');
+        // L'URN du post (ex. urn:li:post:1234) est renvoyé dans l'en-tête x-restli-id.
+        $remoteId = $this->lastHeader('x-restli-id');
 
         return ProviderResult::success(
             $remoteId,
@@ -87,7 +100,7 @@ final class LinkedInProvider extends AbstractProvider {
      * Identifiant du membre connecté, résolu via l'endpoint OIDC userinfo.
      */
     private function personId(string $token): string {
-        $profile = $this->request('GET', self::API_BASE . '/userinfo', [], ['Authorization' => 'Bearer ' . $token]);
+        $profile = $this->request('GET', $this->apiBase() . '/userinfo', [], ['Authorization' => 'Bearer ' . $token]);
 
         return (string) ($profile['sub'] ?? '');
     }
@@ -100,10 +113,36 @@ final class LinkedInProvider extends AbstractProvider {
     }
 
     /**
+     * En-têtes communs de l'API Posts (version d'API + Rest.li).
+     *
      * @return array<string, string>
      */
-    private function authHeaders(): array {
-        return ['Authorization' => 'Bearer ' . $this->secret('ACCESS_TOKEN')];
+    private function apiHeaders(?string $token = null): array {
+        $headers = [
+            'LinkedIn-Version'           => $this->config()->string('api_version', self::DEFAULT_VERSION),
+            'X-Restli-Protocol-Version'  => self::RESTLI_PROTOCOL_VERSION,
+        ];
+        if ($token !== null) {
+            $headers['Authorization'] = 'Bearer ' . $token;
+        }
+
+        return $headers;
+    }
+
+    /**
+     * URL de base de l'API (configurable, repli : const API_BASE).
+     */
+    private function apiBase(): string {
+        return rtrim($this->config()->string('api_url', self::API_BASE), '/');
+    }
+
+    /**
+     * Échappe le texte au format « little text » de LinkedIn (sinon certains
+     * caractères cassent le post). Le # est préservé : nos hashtags sont
+     * intentionnels, pas du texte littéral.
+     */
+    private function escapeLittleText(string $text): string {
+        return (string) preg_replace('/([\\\\|{}@\[\]()<>_*~])/', '\\\\$1', $text);
     }
 
     /**
@@ -129,11 +168,13 @@ final class LinkedInProvider extends AbstractProvider {
      */
     protected function defaults(): array {
         return [
-            'org_id'     => '',
-            'visibility' => 'PUBLIC',
-            'template'   => "{titre} {lien}\n\n{extrait}\n{hashtags}",
+            'api_url'     => self::API_BASE,
+            'api_version' => self::DEFAULT_VERSION,
+            'org_id'      => '',
+            'visibility'  => 'PUBLIC',
+            'template'    => "{titre} {lien}\n\n{extrait}\n{hashtags}",
             'auto_publish' => false,
-            'timeout'    => ProviderConfig::DEFAULT_TIMEOUT,
+            'timeout'     => ProviderConfig::DEFAULT_TIMEOUT,
         ];
     }
 }

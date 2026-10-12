@@ -23,6 +23,9 @@ if (!defined('ABSPATH')) {
  */
 abstract class AbstractProvider implements ProviderInterface {
 
+    /** En-têtes de la dernière réponse HTTP (usage : IDs renvoyés en en-tête). */
+    private array $lastResponseHeaders = [];
+
     /**
      * Publie l'article : gabarit → troncature → API, échec normalisé.
      */
@@ -113,6 +116,15 @@ abstract class AbstractProvider implements ProviderInterface {
      *
      * @return array<string, mixed>
      */
+    final public function defaultSettings(): array {
+        return $this->defaults();
+    }
+
+    /**
+     * Défauts de configuration du réseau (fusionnés sous l'option et le .env).
+     *
+     * @return array<string, mixed>
+     */
     protected function defaults(): array {
         return [];
     }
@@ -154,6 +166,9 @@ abstract class AbstractProvider implements ProviderInterface {
         if (is_wp_error($response)) {
             throw new ProviderException($response->get_error_message(), $this->key());
         }
+
+        $headers = wp_remote_retrieve_headers($response);
+        $this->lastResponseHeaders = is_iterable($headers) ? iterator_to_array($headers) : [];
 
         $code = (int) wp_remote_retrieve_response_code($response);
         $raw = (string) wp_remote_retrieve_body($response);
@@ -210,5 +225,18 @@ abstract class AbstractProvider implements ProviderInterface {
      */
     private function bodyExcerpt(string $raw): string {
         return mb_substr(wp_strip_all_tags($raw), 0, 300);
+    }
+
+    /**
+     * Valeur d'un en-tête de la dernière réponse HTTP (insensible à la casse).
+     */
+    final protected function lastHeader(string $name): string {
+        foreach ($this->lastResponseHeaders as $key => $value) {
+            if (strtolower((string) $key) === strtolower($name)) {
+                return is_array($value) ? (string) reset($value) : (string) $value;
+            }
+        }
+
+        return '';
     }
 }

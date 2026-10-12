@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Ainatrix;
 
 use Ainatrix\Hooks\HookLoader;
+use Ainatrix\SocialSettings\SocialSettingsHooks;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -22,6 +23,8 @@ final class Plugin {
      */
     public static function boot(): void {
         // Enregistrer ici la classe de hooks de chaque fonctionnalité (src/{Feature}/).
-        (new HookLoader())->register();
+        (new HookLoader(
+            new SocialSettingsHooks(),
+        ))->register();
     }
 }
