@@ -12,6 +12,7 @@ namespace AinatrixLive\SocialSettings;
 use AinatrixLive\Hooks\HookSubscriberInterface;
 use AinatrixLive\Providers\ProviderException;
 use AinatrixLive\Providers\ProviderRegistry;
+use AinatrixLive\Providers\SecretStore;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -123,10 +124,28 @@ final class SocialSettingsHooks implements HookSubscriberInterface {
         check_admin_referer(self::SAVE_ACTION, 'aix_live_nonce');
 
         $raw = wp_unslash($_POST['aix_live'] ?? []);
-        SettingsStore::save(SettingsStore::sanitize(is_array($raw) ? $raw : []));
+        $raw = is_array($raw) ? $raw : [];
+        SettingsStore::save(SettingsStore::sanitize($raw));
+        $this->saveSecrets($raw);
 
         wp_safe_redirect(add_query_arg('updated', '1', menu_page_url(self::PAGE_SLUG, false)));
         exit;
+    }
+
+    /**
+     * Enregistre les secrets soumis dans le coffre chiffré. Un champ laissé
+     * vide conserve la valeur existante ; une valeur non vide remplace.
+     */
+    private function saveSecrets(array $raw): void {
+        foreach (SettingsSchema::PAGES as $page) {
+            $pageRaw = isset($raw[$page]) && is_array($raw[$page]) ? $raw[$page] : [];
+            foreach (SettingsSchema::secretFields($page) as $suffix => $field) {
+                $value = isset($pageRaw[$suffix]) && is_string($pageRaw[$suffix]) ? trim($pageRaw[$suffix]) : '';
+                if ($value !== '') {
+                    SecretStore::set($page, (string) $suffix, $value);
+                }
+            }
+        }
     }
 
     /**

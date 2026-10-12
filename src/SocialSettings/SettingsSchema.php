@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace AinatrixLive\SocialSettings;
 
 use AinatrixLive\Providers\MessageTemplate;
-use AinatrixLive\Providers\Secrets;
+use AinatrixLive\Providers\SecretStore;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -22,7 +22,8 @@ if (!defined('ABSPATH')) {
  *
  * Types de champ :
  * - text / number / select / checkbox : persistés dans l'option aix_live_providers ;
- * - env : lecture seule (statut défini/absent dans le .env), jamais soumis.
+ * - secret : saisie password persistée chiffrée dans l'option aix_live_secrets
+ *   (via SecretStore) — jamais rendue en clair, champ vide = valeur conservée.
  */
 final class SettingsSchema {
 
@@ -50,7 +51,7 @@ final class SettingsSchema {
                     'title' => __('Application Meta', 'ainatrix'),
                     'fields' => [
                         self::text('app_id', __('App ID', 'ainatrix'), ['placeholder' => '1234567890123456']),
-                        self::env('APP_SECRET', __('App Secret', 'ainatrix')),
+                        self::secret('APP_SECRET', __('App Secret', 'ainatrix')),
                         [
                             'key'     => 'api_version',
                             'type'    => 'select',
@@ -68,7 +69,7 @@ final class SettingsSchema {
                     'title' => __('Page de publication', 'ainatrix'),
                     'fields' => [
                         self::text('page_id', __('ID de la page', 'ainatrix'), ['placeholder' => '987654321098765']),
-                        self::env('PAGE_TOKEN', __('Page Access Token', 'ainatrix'), __('Token longue durée, généré après connexion de la page.', 'ainatrix')),
+                        self::secret('PAGE_TOKEN', __('Page Access Token', 'ainatrix'), __('Token longue durée, généré après connexion de la page.', 'ainatrix')),
                     ],
                 ],
                 [
@@ -86,7 +87,8 @@ final class SettingsSchema {
                     'title' => __('Application LinkedIn', 'ainatrix'),
                     'fields' => [
                         self::text('client_id', __('Client ID', 'ainatrix'), ['placeholder' => '86abcdef12345']),
-                        self::env('CLIENT_SECRET', __('Client Secret', 'ainatrix')),
+                        self::secret('ACCESS_TOKEN', __('Access Token', 'ainatrix'), __('Token OAuth (~60 jours), scope w_organization_social ou w_member_social.', 'ainatrix')),
+                        self::secret('CLIENT_SECRET', __('Client Secret', 'ainatrix')),
                         self::text('org_id', __('ID de l’organisation (page entreprise)', 'ainatrix'), [
                             'placeholder' => 'urn:li:organization:123456789',
                             'hint'        => __('Format URN. Vierge = publication sur le profil personnel.', 'ainatrix'),
@@ -114,7 +116,7 @@ final class SettingsSchema {
                     'title' => __('Application TikTok', 'ainatrix'),
                     'fields' => [
                         self::text('client_key', __('Client Key', 'ainatrix'), ['placeholder' => 'aw1234567890abcdef']),
-                        self::env('CLIENT_SECRET', __('Client Secret', 'ainatrix')),
+                        self::secret('CLIENT_SECRET', __('Client Secret', 'ainatrix')),
                     ],
                 ],
                 [
@@ -142,7 +144,7 @@ final class SettingsSchema {
                     'fields' => [
                         self::text('ig_user_id', __('ID du compte Instagram Business', 'ainatrix'), ['placeholder' => '1784xxxxxxxxxxx']),
                         self::text('fb_page_id', __('Page Facebook liée', 'ainatrix'), ['placeholder' => 'Ma Page — 987654321098765']),
-                        self::env('PAGE_TOKEN', __('Page Access Token', 'ainatrix'), __('Partagé avec Facebook : même app Meta, même page.', 'ainatrix')),
+                        self::secret('PAGE_TOKEN', __('Page Access Token', 'ainatrix'), __('Partagé avec Facebook : même app Meta, même page.', 'ainatrix')),
                     ],
                 ],
                 [
@@ -162,7 +164,7 @@ final class SettingsSchema {
     }
 
     /**
-     * Champs persistés d'une page, à plat (clé => spécification), sans les champs .env.
+     * Champs persistés d'une page, à plat (clé => spécification), sans les champs secrets.
      *
      * @return array<string, array<string, mixed>>
      */
@@ -170,8 +172,26 @@ final class SettingsSchema {
         $fields = [];
         foreach (self::sections($page) as $section) {
             foreach ($section['fields'] as $field) {
-                if (($field['type'] ?? 'text') !== 'env' && isset($field['key'])) {
+                if (($field['type'] ?? 'text') !== 'secret' && isset($field['key'])) {
                     $fields[$field['key']] = $field;
+                }
+            }
+        }
+
+        return $fields;
+    }
+
+    /**
+     * Champs secrets d'une page, à plat (suffixe => spécification).
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    public static function secretFields(string $page): array {
+        $fields = [];
+        foreach (self::sections($page) as $section) {
+            foreach ($section['fields'] as $field) {
+                if (($field['type'] ?? '') === 'secret') {
+                    $fields[(string) $field['suffix']] = $field;
                 }
             }
         }
@@ -208,10 +228,10 @@ final class SettingsSchema {
     }
 
     /**
-     * Spécification d'un champ .env (lecture seule : statut, jamais de valeur).
+     * Spécification d'un champ secret (password, chiffré en base, jamais rendu).
      */
-    private static function env(string $suffix, string $label, string $hint = ''): array {
-        return ['type' => 'env', 'suffix' => $suffix, 'label' => $label, 'hint' => $hint];
+    private static function secret(string $suffix, string $label, string $hint = ''): array {
+        return ['type' => 'secret', 'suffix' => $suffix, 'label' => $label, 'hint' => $hint];
     }
 
     /**
@@ -238,9 +258,9 @@ final class SettingsSchema {
     }
 
     /**
-     * Nom complet de la variable .env d'un champ env d'une page.
+     * Nom de la variable .env de repli d'un champ secret d'une page.
      */
     public static function envName(string $page, array $field): string {
-        return Secrets::envName($page, (string) $field['suffix']);
+        return SecretStore::envName($page, (string) $field['suffix']);
     }
 }

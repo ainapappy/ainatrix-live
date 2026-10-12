@@ -64,7 +64,7 @@ abstract class AbstractProvider implements ProviderInterface {
             }
         }
         foreach ($this->requiredSecrets() as $suffix) {
-            if (!Secrets::hasFor($this->key(), $suffix)) {
+            if (!SecretStore::has($this->key(), $suffix)) {
                 $missing[] = Secrets::envName($this->key(), $suffix);
             }
         }
@@ -105,10 +105,10 @@ abstract class AbstractProvider implements ProviderInterface {
     }
 
     /**
-     * Lit un secret du .env pour ce réseau.
+     * Lit un secret de ce réseau (coffre chiffré en base, repli .env).
      */
     final protected function secret(string $suffix): string {
-        return Secrets::forNetwork($this->key(), $suffix);
+        return SecretStore::get($this->key(), $suffix);
     }
 
     /**

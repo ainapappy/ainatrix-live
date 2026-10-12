@@ -12,7 +12,7 @@ namespace AinatrixLive\SocialSettings;
 use AinatrixLive\Providers\ProviderConfig;
 use AinatrixLive\Providers\ProviderInterface;
 use AinatrixLive\Providers\ProviderRegistry;
-use AinatrixLive\Providers\Secrets;
+use AinatrixLive\Providers\SecretStore;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -23,9 +23,10 @@ if (!defined('ABSPATH')) {
  * markup WordPress : onglets par réseau, champs du schéma, statut de
  * configuration (badge + pastille) et boutons d'action.
  *
- * Adaptation de sécurité par rapport à la maquette : les champs .env sont en
- * lecture seule (statut défini/absent) — aucune valeur de secret n'est jamais
- * affichée ni soumise.
+ * Adaptation de sécurité par rapport à la maquette : les champs secrets sont
+ * soumis mais jamais re-rendus avec leur valeur — l'input affiche uniquement
+ * un masque, champ vide = valeur conservée. Stockage : option chiffrée
+ * (SecretStore), repli .env.
  */
 final class SettingsPage {
 
@@ -106,7 +107,7 @@ final class SettingsPage {
             </div>
 
             <div class="env-note">
-                🔒 <?php esc_html_e('Champs marqués .env : la valeur réelle vit dans le fichier .env du plugin. Ici on configure seulement le comportement.', 'ainatrix'); ?>
+                🔒 <?php esc_html_e('Les secrets saisis ici sont chiffrés en base de données. Le fichier .env du plugin reste un repli pour le développement local.', 'ainatrix'); ?>
             </div>
 
             <?php foreach (SettingsSchema::sections($key) as $section) : ?>
@@ -131,8 +132,8 @@ final class SettingsPage {
      */
     private function renderField(string $key, ProviderConfig $config, array $field): void {
         $type = (string) ($field['type'] ?? 'text');
-        if ($type === 'env') {
-            $this->renderEnvField($key, $field);
+        if ($type === 'secret') {
+            $this->renderSecretField($key, $field);
 
             return;
         }
@@ -181,26 +182,34 @@ final class SettingsPage {
     }
 
     /**
-     * Champ .env : lecture seule — statique défini/absent, jamais la valeur.
+     * Champ secret : saisie password, jamais de valeur re-rendue. Stockage
+     * chiffré en base (SecretStore), repli .env. Champ vide = valeur conservée.
      *
      * @param array<string, mixed> $field
      */
-    private function renderEnvField(string $page, array $field): void {
-        $set = Secrets::hasFor($page, (string) $field['suffix']);
+    private function renderSecretField(string $page, array $field): void {
+        $suffix = (string) $field['suffix'];
+        $set = SecretStore::has($page, $suffix);
         $envName = SettingsSchema::envName($page, $field);
-        $id = 'env-' . strtolower(strtr($envName, '_', '-'));
+        $id = 'secret-' . strtolower(strtr($envName, '_', '-'));
         ?>
         <div class="field">
             <label for="<?php echo esc_attr($id); ?>">
-                <?php echo esc_html((string) $field['label']); ?> <span class="env-tag">.env</span>
+                <?php echo esc_html((string) $field['label']); ?>
             </label>
             <div class="secret-row">
-                <input type="password" id="<?php echo esc_attr($id); ?>" value="••••••••••••" disabled<?php echo $set ? '' : ' class="missing"'; ?>>
+                <input type="password" id="<?php echo esc_attr($id); ?>"
+                       name="<?php echo esc_attr(sprintf('aix_live[%1$s][%2$s]', $page, $suffix)); ?>"
+                       value="" autocomplete="off"
+                       placeholder="<?php echo $set ? esc_attr__('••••••••••••', 'ainatrix') : ''; ?>"
+                       <?php echo $set ? '' : ' class="missing"'; ?>>
                 <button type="button" class="toggle-secret" data-target="<?php echo esc_attr($id); ?>"><?php esc_html_e('Afficher', 'ainatrix'); ?></button>
             </div>
             <span class="hint">
                 <span class="env-tag"><?php echo esc_html($envName); ?></span> —
-                <?php echo $set ? esc_html__('défini dans le .env', 'ainatrix') : esc_html__('absent du .env', 'ainatrix'); ?>
+                <?php echo $set
+                    ? esc_html__('enregistré, chiffré en base (laisser vide pour conserver)', 'ainatrix')
+                    : esc_html__('non enregistré', 'ainatrix'); ?>
                 <?php if (($field['hint'] ?? '') !== '') : ?>
                     · <?php echo esc_html((string) $field['hint']); ?>
                 <?php endif; ?>
