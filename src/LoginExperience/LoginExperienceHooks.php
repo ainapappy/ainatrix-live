@@ -18,6 +18,8 @@ if (!defined('ABSPATH')) {
 final class LoginExperienceHooks implements HookSubscriberInterface {
 
     private const ERROR_MESSAGE = 'Identifiants invalides ou tentative temporairement bloquée. Veuillez réessayer.';
+    private const NONCE_ACTION = 'aix_live_login_form';
+    private const NONCE_FIELD = 'aix_live_login_nonce';
 
     public function __construct(private readonly LoginRateLimiter $rateLimiter = new LoginRateLimiter()) {}
 
@@ -77,6 +79,9 @@ final class LoginExperienceHooks implements HookSubscriberInterface {
      */
     public function addBodyClass(array $classes): array {
         $classes[] = 'aix-live-login-premium';
+        if ($this->isStandardLoginAction()) {
+            $classes[] = 'aix-live-login-custom-form';
+        }
 
         return array_values(array_unique($classes));
     }
@@ -113,10 +118,19 @@ final class LoginExperienceHooks implements HookSubscriberInterface {
         }
 
         $context = [
-            'brand'       => __('AINATRIX', 'ainatrix'),
-            'headline'    => __('Espace client sécurisé', 'ainatrix'),
-            'description' => __('Connectez-vous pour gérer vos publications sociales et accélérer votre croissance.', 'ainatrix'),
-            'badge'       => __('Marketing Automation', 'ainatrix'),
+            'brand'          => __('ainatrix', 'ainatrix'),
+            'ariaLabel'      => __('Connexion sécurisée', 'ainatrix'),
+            'usernameLabel'  => __('Identifiant ou e-mail', 'ainatrix'),
+            'passwordLabel'  => __('Mot de passe', 'ainatrix'),
+            'submitLabel'    => __('Se connecter', 'ainatrix'),
+            'lostPassword'   => __('Mot de passe oublié ?', 'ainatrix'),
+            'backToSite'     => __('Retour au site', 'ainatrix'),
+            'loginUrl'       => wp_login_url(),
+            'redirectTo'     => $this->resolveRedirectTo(),
+            'remember'       => isset($_POST['rememberme']),
+            'username'       => $this->resolvePostedUsername(),
+            'nonceFieldName' => self::NONCE_FIELD,
+            'nonceValue'     => wp_create_nonce(self::NONCE_ACTION),
         ];
 
         ob_start();
@@ -175,6 +189,10 @@ final class LoginExperienceHooks implements HookSubscriberInterface {
         if (!$this->isStandardLoginPost()) {
             return $user;
         }
+        if (!$this->isCustomNonceValid()) {
+            $this->applyFailureDelay();
+            return new \WP_Error('aix_live_invalid_login_request', __(self::ERROR_MESSAGE, 'ainatrix'));
+        }
 
         $normalizedUsername = $this->resolveUsername($username);
         $ipAddress = $this->resolveIpAddress();
@@ -189,6 +207,7 @@ final class LoginExperienceHooks implements HookSubscriberInterface {
             $ipAddress,
             $this->rateLimiter->getLockRemainingSeconds($normalizedUsername, $ipAddress)
         );
+        $this->applyFailureDelay();
 
         return new \WP_Error('aix_live_rate_limited', __(self::ERROR_MESSAGE, 'ainatrix'));
     }
@@ -207,6 +226,7 @@ final class LoginExperienceHooks implements HookSubscriberInterface {
         $normalizedUsername = $this->resolveUsername($username);
         $ipAddress = $this->resolveIpAddress();
         $this->rateLimiter->recordFailure($normalizedUsername, $ipAddress);
+        $this->applyFailureDelay();
 
         do_action(
             'aix_live_login_failed_attempt',
@@ -273,5 +293,48 @@ final class LoginExperienceHooks implements HookSubscriberInterface {
         $ipAddress = trim(sanitize_text_field((string) wp_unslash($_SERVER['REMOTE_ADDR'] ?? '')));
 
         return filter_var($ipAddress, FILTER_VALIDATE_IP) ? $ipAddress : '0.0.0.0';
+    }
+
+    private function isCustomNonceValid(): bool {
+        $required = (bool) apply_filters('aix_live_login_require_nonce', true);
+        if (!$required) {
+            return true;
+        }
+
+        $nonce = isset($_POST[self::NONCE_FIELD]) ? sanitize_text_field((string) wp_unslash($_POST[self::NONCE_FIELD])) : '';
+        if ($nonce === '') {
+            return false;
+        }
+
+        return wp_verify_nonce($nonce, self::NONCE_ACTION) === 1;
+    }
+
+    private function resolveRedirectTo(): string {
+        $default = admin_url();
+        $raw = isset($_REQUEST['redirect_to']) ? (string) wp_unslash($_REQUEST['redirect_to']) : '';
+
+        return wp_validate_redirect($raw, $default);
+    }
+
+    private function resolvePostedUsername(): string {
+        if (!isset($_POST['log']) || !is_string($_POST['log'])) {
+            return '';
+        }
+
+        return sanitize_text_field((string) wp_unslash($_POST['log']));
+    }
+
+    private function applyFailureDelay(): void {
+        $min = (int) apply_filters('aix_live_login_delay_min_us', 250000);
+        $max = (int) apply_filters('aix_live_login_delay_max_us', 700000);
+
+        if ($min < 0) {
+            $min = 0;
+        }
+        if ($max < $min) {
+            $max = $min;
+        }
+
+        usleep(wp_rand($min, $max));
     }
 }

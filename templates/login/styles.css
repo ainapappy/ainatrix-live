@@ -1,47 +1,119 @@
 /*
- * Styles du template login personnalisé.
+ * Styles de template login alignés sur .knowledge/design/login-premium.html
  */
 
-.aix-login-template {
-  margin: 0 0 16px;
-  padding: 14px 16px;
-  border: 1px solid var(--aix-login-border);
-  border-radius: 16px;
-  background: color-mix(in oklab, var(--aix-login-surface), transparent 12%);
-  backdrop-filter: blur(10px);
+body.login.aix-live-login-custom-form #loginform,
+body.login.aix-live-login-custom-form #nav,
+body.login.aix-live-login-custom-form #backtoblog {
+  display: none;
 }
 
-.aix-login-template__badge {
-  display: inline-flex;
-  margin: 0 0 10px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 11px;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  color: var(--aix-login-text-strong);
-  border: 1px solid color-mix(in oklab, var(--aix-login-primary), transparent 70%);
-  background: color-mix(in oklab, var(--aix-login-primary), transparent 82%);
+body.login.aix-live-login-custom-form h1 {
+  display: none;
 }
 
-.aix-login-template__title {
-  margin: 0 0 6px;
-  font-size: 20px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--aix-login-text-strong);
+body.login.aix-live-login-custom-form #login {
+  width: min(92vw, 408px);
 }
 
-.aix-login-template__headline {
-  margin: 0 0 8px;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--aix-login-text);
-}
-
-.aix-login-template__description {
-  margin: 0;
+body.login.aix-live-login-custom-form #login_error,
+body.login.aix-live-login-custom-form .message {
+  margin: 0 0 14px;
+  background: #fff1f2;
+  color: #b91c1c;
+  border-left: 4px solid #b91c1c;
+  border-radius: 8px;
+  padding: 10px 12px;
   font-size: 13px;
-  line-height: 1.45;
-  color: var(--aix-login-muted);
+}
+
+.aix-login-shell {
+  width: min(92vw, 408px);
+}
+
+.aix-login-shell__brand {
+  margin: 0 0 22px;
+  font-size: 36px;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 0.01em;
+  color: #e2e8f0;
+  text-shadow: 0 8px 24px rgba(15, 23, 42, 0.45);
+  text-transform: lowercase;
+}
+
+.aix-login-card {
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.34);
+  backdrop-filter: blur(3px);
+  padding: 24px;
+}
+
+.aix-login-card__field {
+  margin-bottom: 16px;
+}
+
+.aix-login-card__field label {
+  display: block;
+  margin-bottom: 6px;
+  color: #0f172a;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.aix-login-card__field input[type="text"],
+.aix-login-card__field input[type="password"] {
+  width: 100%;
+  border: 1px solid #d5d9e0;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 15px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.aix-login-card__field input[type="text"]:focus,
+.aix-login-card__field input[type="password"]:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+  transform: translateY(-1px);
+}
+
+.aix-login-card__remember {
+  margin: 0 0 16px;
+  color: #334155;
+}
+
+.aix-login-card__submit {
+  width: 100%;
+  border: 0;
+  border-radius: 10px;
+  padding: 11px 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  background: #2563eb;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.aix-login-card__submit:hover,
+.aix-login-card__submit:focus {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.28);
+}
+
+.aix-login-shell__meta {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 13px;
+  color: #cbd5e1;
+}
+
+.aix-login-shell__meta a {
+  color: #fff;
+  text-decoration: none;
 }

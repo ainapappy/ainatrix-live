@@ -5,7 +5,7 @@ jQuery(function ($) {
   'use strict';
 
   var $body = $('body.login');
-  var $forms = $('#loginform, #lostpasswordform, #registerform, #resetpassform');
+  var $forms = $('#aix_live_login_form, #loginform, #lostpasswordform, #registerform, #resetpassform');
   var storageKey = 'aix_live_login_theme';
   var themeData = window.aixLiveLogin && window.aixLiveLogin.theme ? window.aixLiveLogin.theme : {};
   var toggleLabel = themeData.toggleLabel || 'Basculer le thème';
