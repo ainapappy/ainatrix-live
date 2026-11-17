@@ -44,6 +44,7 @@ final class LoginExperienceHooks implements HookSubscriberInterface {
 
         add_filter('wp_authenticate_user', [$this, 'blockUserWhenRateLimited'], 10, 2);
         add_filter('authenticate', [$this, 'enforceLoginContract'], 100, 1);
+        add_filter('login_redirect', [$this, 'guardRedirectAgainstLeakedOutput'], 10, 3);
         add_action('wp_login_failed', [$this, 'recordFailedLogin'], 10, 2);
         add_action('wp_login', [$this, 'resetRateLimitOnSuccess'], 10, 2);
         add_filter('login_errors', [$this, 'filterLoginErrors']);
@@ -261,6 +262,36 @@ final class LoginExperienceHooks implements HookSubscriberInterface {
             $ipAddress,
             $error instanceof \WP_Error ? $error->get_error_codes() : []
         );
+    }
+
+    /**
+     * Filet de sécurité redirection (hotfix 2026-11-17 « page blanche après
+     * login ») : si des octets ont déjà été émis quand wp-login.php s'apprête
+     * à rediriger après une authentification réussie, wp_safe_redirect()
+     * devient silencieusement inopérant (headers_sent() === true) et la requête
+     * se termine en 200 sans corps — page blanche figée sur wp-login.php alors
+     * que le cookie d'authentification est posé (obligatoirement un refresh
+     * manuel pour atteindre le dashboard). On émet ici un repli de navigation
+     * HTML+JS vers la destination validée ; le header Location que le cœur
+     * tentera ensuite est ignoré, mais le corps contient désormais le repli.
+     *
+     * Chemin sain : aucun octet émis → ce filtre n'émet rien, la 302 native
+     * part inchangée.
+     *
+     * @param \WP_User|\WP_Error|null $user
+     */
+    public function guardRedirectAgainstLeakedOutput(string $redirect_to, string $requested_redirect_to, $user): string {
+        if (!$user instanceof \WP_User || !headers_sent()) {
+            return $redirect_to;
+        }
+
+        $requested = $requested_redirect_to !== '' ? $requested_redirect_to : $redirect_to;
+        $target = wp_validate_redirect($requested, admin_url());
+
+        echo '<meta http-equiv="refresh" content="0;url=' . esc_url($target) . '">';
+        echo '<script>location.replace(' . (string) wp_json_encode($target) . ');</script>';
+
+        return $redirect_to;
     }
 
     /**
