@@ -83,6 +83,7 @@ final class SettingsPage {
                     <button type="button" class="btn" id="btn-test"><?php esc_html_e('Tester la connexion', 'ainatrix'); ?></button>
                     <button type="submit" class="btn primary"><?php esc_html_e('Enregistrer', 'ainatrix'); ?></button>
                 </div>
+                <?php do_action('aix_live_form_recaptcha', 'settings'); ?>
             </form>
         </div>
 

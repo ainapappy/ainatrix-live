@@ -51,6 +51,7 @@ $nonceValue = isset($context['nonceValue']) ? (string) $context['nonceValue'] : 
             <?php if ($nonceValue !== '') : ?>
                 <input type="hidden" name="<?php echo esc_attr($nonceFieldName); ?>" value="<?php echo esc_attr($nonceValue); ?>">
             <?php endif; ?>
+            <?php do_action('aix_live_form_recaptcha', 'login'); ?>
         </form>
     </section>
     <p class="aix-login-shell__meta">

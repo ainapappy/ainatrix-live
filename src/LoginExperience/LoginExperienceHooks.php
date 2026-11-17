@@ -244,9 +244,11 @@ final class LoginExperienceHooks implements HookSubscriberInterface {
         if (!$this->isStandardLoginPost()) {
             return;
         }
-        if ($error instanceof \WP_Error && in_array($error->get_error_code(), ['aix_live_rate_limited', 'aix_live_invalid_login_request'], true)) {
-            // Échec déjà sanctionné (verrou actif ou nonce absent) : ne pas
-            // re-compter ni re-delay, sinon double pénalité de worker (SEC-04).
+        if ($error instanceof \WP_Error && in_array($error->get_error_code(), ['aix_live_rate_limited', 'aix_live_invalid_login_request', 'aix_live_recaptcha_failed'], true)) {
+            // Échec déjà sanctionné (verrou actif, nonce absent ou captcha
+            // refusé) : ne pas re-compter ni re-delay, sinon double pénalité
+            // de worker (SEC-04) — l'échec captcha ne nourrit jamais le
+            // verrou (anti-DoS lockout).
             return;
         }
 

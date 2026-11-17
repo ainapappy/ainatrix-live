@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ainatrix live 2.16.1\n"
 "Report-Msgid-Bugs-To: https://www.ainatrix.com\n"
-"POT-Creation-Date: 2026-11-17 14:39+0300\n"
+"POT-Creation-Date: 2026-11-17 15:26+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,7 +19,6 @@ msgstr ""
 "X-Generator: ainatrix-live\n"
 "X-Domain: ainatrix\n"
 
-#: src/EditorPanel/EditorContext.php:70
 #, php-format
 msgid "Page — %s"
 msgstr ""
@@ -96,11 +95,11 @@ msgstr ""
 msgid "Retour au site"
 msgstr ""
 
-#: src/LoginExperience/LoginExperienceHooks.php:283
+#: src/LoginExperience/LoginExperienceHooks.php:285
 msgid "Erreur :"
 msgstr ""
 
-#: src/LoginExperience/LoginExperienceHooks.php:311
+#: src/LoginExperience/LoginExperienceHooks.php:313
 msgid ""
 "Identifiants invalides ou tentative temporairement bloquée. Veuillez "
 "réessayer."
@@ -175,6 +174,18 @@ msgstr ""
 msgid "{titre} {hashtags}"
 msgstr ""
 
+#: src/Recaptcha/RecaptchaHooks.php:154
+#: src/SocialSettings/SocialSettingsHooks.php:111
+#: src/SocialSettings/SocialSettingsHooks.php:122
+#: src/SocialSettings/SocialSettingsHooks.php:156
+msgid "Accès refusé."
+msgstr ""
+
+#: src/Recaptcha/RecaptchaHooks.php:196
+msgid ""
+"Vérification anti-robot échouée. Veuillez recharger la page et réessayer."
+msgstr ""
+
 #: src/SocialSettings/SettingsPage.php:47
 msgid "Réglages réseaux sociaux"
 msgstr ""
@@ -196,7 +207,7 @@ msgid ""
 msgstr ""
 
 #: src/SocialSettings/SettingsPage.php:72
-#: src/SocialSettings/SettingsPage.php:106 assets/js/aix-live-editor.js:215
+#: src/SocialSettings/SettingsPage.php:107 assets/js/aix-live-editor.js:215
 msgid "Configuré"
 msgstr ""
 
@@ -212,31 +223,31 @@ msgstr ""
 msgid "Enregistrer"
 msgstr ""
 
-#: src/SocialSettings/SettingsPage.php:106
+#: src/SocialSettings/SettingsPage.php:107
 #: src/SocialSettings/SocialSettingsHooks.php:99
 #: assets/js/aix-live-editor.js:215
 msgid "Non configuré"
 msgstr ""
 
-#: src/SocialSettings/SettingsPage.php:111
+#: src/SocialSettings/SettingsPage.php:112
 msgid ""
 "Les secrets saisis ici sont chiffrés en base de données. Le fichier .env du "
 "plugin reste un repli pour le développement local."
 msgstr ""
 
-#: src/SocialSettings/SettingsPage.php:205
+#: src/SocialSettings/SettingsPage.php:206
 msgid "••••••••••••"
 msgstr ""
 
-#: src/SocialSettings/SettingsPage.php:207
+#: src/SocialSettings/SettingsPage.php:208
 msgid "Afficher ou masquer"
 msgstr ""
 
-#: src/SocialSettings/SettingsPage.php:214
+#: src/SocialSettings/SettingsPage.php:215
 msgid "enregistré, chiffré en base (laisser vide pour conserver)"
 msgstr ""
 
-#: src/SocialSettings/SettingsPage.php:215
+#: src/SocialSettings/SettingsPage.php:216
 msgid "non enregistré"
 msgstr ""
 
@@ -481,12 +492,6 @@ msgstr ""
 
 #: src/SocialSettings/SocialSettingsHooks.php:101
 msgid "Configuration incomplète — complétez les champs requis."
-msgstr ""
-
-#: src/SocialSettings/SocialSettingsHooks.php:111
-#: src/SocialSettings/SocialSettingsHooks.php:122
-#: src/SocialSettings/SocialSettingsHooks.php:156
-msgid "Accès refusé."
 msgstr ""
 
 #: src/SocialSettings/SocialSettingsHooks.php:164
