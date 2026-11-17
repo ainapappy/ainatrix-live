@@ -38,9 +38,8 @@ final class InstagramProvider extends AbstractProvider {
     public function testConnection(): ProviderResult {
         try {
             $data = $this->request('GET', $this->apiUrl($this->config()->string('ig_user_id'), [
-                'fields'       => 'username',
-                'access_token' => $this->secret('PAGE_TOKEN'),
-            ]));
+                'fields' => 'username',
+            ]), [], ['Authorization' => 'Bearer ' . $this->secret('PAGE_TOKEN')]);
         } catch (ProviderException $exception) {
             return ProviderResult::failure($exception->getMessage(), $exception->httpCode());
         }
@@ -60,12 +59,12 @@ final class InstagramProvider extends AbstractProvider {
 
         $token = $this->secret('PAGE_TOKEN');
         $userId = $this->config()->string('ig_user_id');
+        $headers = ['Authorization' => 'Bearer ' . $token];
 
         $container = $this->request('POST', $this->apiUrl($userId . '/media'), [
-            'image_url'    => $payload->imageUrl,
-            'caption'      => $message,
-            'access_token' => $token,
-        ]);
+            'image_url' => $payload->imageUrl,
+            'caption'   => $message,
+        ], $headers);
 
         $creationId = (string) ($container['id'] ?? '');
         if ($creationId === '') {
@@ -75,17 +74,17 @@ final class InstagramProvider extends AbstractProvider {
         }
 
         $published = $this->request('POST', $this->apiUrl($userId . '/media_publish'), [
-            'creation_id'  => $creationId,
-            'access_token' => $token,
-        ]);
+            'creation_id' => $creationId,
+        ], $headers);
 
         return ProviderResult::success((string) ($published['id'] ?? ''));
     }
 
     /**
      * URL d'un endpoint Instagram Graph : https://graph.facebook.com/{version}/{chemin}.
+     * Le token voyage en en-tête Authorization (audit SEC-07), jamais en query string.
      *
-     * @param array<string, string> $query Paramètres de requête (access_token…).
+     * @param array<string, string> $query Paramètres de requête (fields…).
      */
     private function apiUrl(string $path, array $query = []): string {
         $base = rtrim($this->config()->string('graph_url', 'https://graph.facebook.com'), '/');
@@ -115,7 +114,7 @@ final class InstagramProvider extends AbstractProvider {
     /**
      * @return array<string, mixed>
      */
-    protected function defaults(): array {
+    public function defaultSettings(): array {
         return [
             'ig_user_id'   => '',
             'template'     => __("{titre}\n\nLien en bio 🔗 {lien_court}\n{hashtags}", 'ainatrix'),

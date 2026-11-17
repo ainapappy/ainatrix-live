@@ -48,8 +48,16 @@ final class SettingsPage {
             </h1>
             <p class="page-sub">
                 <?php esc_html_e('Configuration des connexions de publication.', 'ainatrix'); ?>
-                <?php esc_html_e('Les secrets sont stockés dans le fichier .env du plugin — jamais en base de données.', 'ainatrix'); ?>
+                <?php esc_html_e('Les secrets sont chiffrés en base de données ; le .env du plugin reste un repli pour le développement local.', 'ainatrix'); ?>
             </p>
+
+            <?php if (SecretStore::status() === 'rotated') : ?>
+                <div class="notice notice-error inline">
+                    <p>
+                        <?php esc_html_e('Les salts de l’installation ont changé : les secrets chiffrés enregistrés ne sont plus lisibles. Ressaisissez-les ci-dessous pour les re-chiffrer.', 'ainatrix'); ?>
+                    </p>
+                </div>
+            <?php endif; ?>
 
             <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
                 <input type="hidden" name="action" value="aix_live_save_settings">
@@ -78,7 +86,7 @@ final class SettingsPage {
             </form>
         </div>
 
-        <div id="toast" role="status"></div>
+        <div id="aix-toast" role="status"></div>
         <?php
     }
 
@@ -159,7 +167,7 @@ final class SettingsPage {
                         <?php endforeach; ?>
                     </select>
                 <?php else : ?>
-                    <input type="<?php echo esc_attr($type === 'number' ? 'text' : 'text'); ?>"
+                    <input type="text"
                            id="<?php echo esc_attr($id); ?>"
                            name="<?php echo esc_attr($name); ?>"
                            value="<?php echo esc_attr($type === 'number' ? (string) $config->int($fieldKey, (int) ($field['default'] ?? 0)) : $config->string($fieldKey, (string) ($field['default'] ?? ''))); ?>"

@@ -101,7 +101,7 @@ abstract class AbstractProvider implements ProviderInterface {
      * Configuration du réseau (défauts + option + .env).
      */
     final protected function config(): ProviderConfig {
-        return ProviderConfig::load($this->key(), $this->defaults());
+        return ProviderConfig::load($this->key(), $this->defaultSettings());
     }
 
     /**
@@ -113,19 +113,12 @@ abstract class AbstractProvider implements ProviderInterface {
 
     /**
      * Défauts de configuration du réseau (fusionnés sous l'option et le .env).
+     * Déclaré par chaque provider (audit QA-06 : une seule méthode au lieu du
+     * duo defaults()/defaultSettings()).
      *
      * @return array<string, mixed>
      */
-    final public function defaultSettings(): array {
-        return $this->defaults();
-    }
-
-    /**
-     * Défauts de configuration du réseau (fusionnés sous l'option et le .env).
-     *
-     * @return array<string, mixed>
-     */
-    protected function defaults(): array {
+    public function defaultSettings(): array {
         return [];
     }
 
@@ -167,8 +160,8 @@ abstract class AbstractProvider implements ProviderInterface {
             throw new ProviderException($response->get_error_message(), $this->key());
         }
 
-        $headers = wp_remote_retrieve_headers($response);
-        $this->lastResponseHeaders = is_iterable($headers) ? iterator_to_array($headers) : [];
+        $responseHeaders = wp_remote_retrieve_headers($response);
+        $this->lastResponseHeaders = is_iterable($responseHeaders) ? iterator_to_array($responseHeaders) : [];
 
         $code = (int) wp_remote_retrieve_response_code($response);
         $raw = (string) wp_remote_retrieve_body($response);

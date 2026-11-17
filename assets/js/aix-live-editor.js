@@ -145,10 +145,11 @@
 		 *
 		 * Point de branchement de l'appel réel : quand l'endpoint existera
 		 * (REST ou admin-ajax), envoyer ici les réseaux sélectionnés et
-		 * l'ID de l'article, avec settings.nonce (action
-		 * 'aix_live_editor_publish') vérifié côté serveur. En attendant,
-		 * un état d'envoi simulé est affiché et une notice informe que la
-		 * fonctionnalité est à venir.
+		 * l'ID de l'article, avec un nonce vérifié côté serveur (action
+		 * 'aix_live_editor_publish', déclarée dans EditorPanelHooks). Aucun
+		 * nonce n'est injecté en attendant l'endpoint (audit QA-07).
+		 * En attendant, un état d'envoi simulé est affiché et une notice
+		 * informe que la fonctionnalité est à venir.
 		 */
 		function handlePublish() {
 			if (sending || !isPublished) {

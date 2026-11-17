@@ -18,8 +18,10 @@ if (!defined('ABSPATH')) {
 
 /**
  * Charge les assets du panneau de publication sociale dans l'éditeur de blocs
- * (fill PluginPostStatusInfo) et expose au JS les réseaux, leur état de
- * configuration et le nonce du futur appel de publication.
+ * (fill PluginPostStatusInfo) et expose au JS les réseaux et leur état de
+ * configuration. Le nonce du futur appel de publication n'est pas encore
+ * distribué : aucun endpoint ne le consomme (audit QA-07) — la constante
+ * documente l'action à vérifier côté serveur quand l'endpoint existera.
  */
 final class EditorPanelHooks implements HookSubscriberInterface {
 

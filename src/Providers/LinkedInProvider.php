@@ -166,7 +166,7 @@ final class LinkedInProvider extends AbstractProvider {
     /**
      * @return array<string, mixed>
      */
-    protected function defaults(): array {
+    public function defaultSettings(): array {
         return [
             'api_url'     => self::API_BASE,
             'api_version' => self::DEFAULT_VERSION,

@@ -74,7 +74,7 @@ final class TikTokProvider extends AbstractProvider {
     /**
      * @return array<string, mixed>
      */
-    protected function defaults(): array {
+    public function defaultSettings(): array {
         return [
             'client_key'       => '',
             'privacy'          => 'PUBLIC_TO_EVERYONE',

@@ -1,14 +1,537 @@
 # Copyright (C) 2026 Aina Papy
 # This file is distributed under the GPL-3.0 license.
+#
+#
+#
+
 msgid ""
 msgstr ""
-"Project-Id-Version: ainatrix live 2.16.0\n"
+"Project-Id-Version: ainatrix live 2.16.1\n"
 "Report-Msgid-Bugs-To: https://www.ainatrix.com\n"
-"POT-Creation-Date: 2026-10-12 00:00+0000\n"
+"POT-Creation-Date: 2026-11-17 14:39+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Revision-Date: \n"
-"Language-Team: \n"
 "X-Generator: ainatrix-live\n"
 "X-Domain: ainatrix\n"
+
+#: src/EditorPanel/EditorContext.php:70
+#, php-format
+msgid "Page — %s"
+msgstr ""
+
+#: src/EditorPanel/EditorContext.php:71 src/EditorPanel/EditorContext.php:79
+msgid "ID manquant"
+msgstr ""
+
+#: src/EditorPanel/EditorContext.php:74
+#, php-format
+msgid "Page entreprise — %s"
+msgstr ""
+
+#: src/EditorPanel/EditorContext.php:75
+msgid "Profil personnel"
+msgstr ""
+
+#: src/EditorPanel/EditorContext.php:76
+msgid "Compte Business TikTok"
+msgstr ""
+
+#: src/EditorPanel/EditorContext.php:78
+#, php-format
+msgid "Compte — %s"
+msgstr ""
+
+#: src/LoginExperience/LoginExperienceHooks.php:71
+#: src/LoginExperience/LoginExperienceHooks.php:163
+msgid "Basculer le thème"
+msgstr ""
+
+#: src/LoginExperience/LoginExperienceHooks.php:72
+#: src/LoginExperience/LoginExperienceHooks.php:165
+msgid "Dark"
+msgstr ""
+
+#: src/LoginExperience/LoginExperienceHooks.php:73
+msgid "Light"
+msgstr ""
+
+#: src/LoginExperience/LoginExperienceHooks.php:107
+#: src/SocialSettings/SettingsPage.php:46
+#: src/SocialSettings/SocialSettingsHooks.php:51
+msgid "ainatrix live"
+msgstr ""
+
+#: src/LoginExperience/LoginExperienceHooks.php:125
+#: src/SocialSettings/SocialSettingsHooks.php:52
+msgid "ainatrix"
+msgstr ""
+
+#: src/LoginExperience/LoginExperienceHooks.php:126
+#: src/LoginExperience/LoginExperienceHooks.php:153
+msgid "Connexion sécurisée"
+msgstr ""
+
+#: src/LoginExperience/LoginExperienceHooks.php:127
+msgid "Identifiant ou e-mail"
+msgstr ""
+
+#: src/LoginExperience/LoginExperienceHooks.php:128
+msgid "Mot de passe"
+msgstr ""
+
+#: src/LoginExperience/LoginExperienceHooks.php:129
+msgid "Se connecter"
+msgstr ""
+
+#: src/LoginExperience/LoginExperienceHooks.php:130
+msgid "Mot de passe oublié ?"
+msgstr ""
+
+#: src/LoginExperience/LoginExperienceHooks.php:131
+msgid "Retour au site"
+msgstr ""
+
+#: src/LoginExperience/LoginExperienceHooks.php:283
+msgid "Erreur :"
+msgstr ""
+
+#: src/LoginExperience/LoginExperienceHooks.php:311
+msgid ""
+"Identifiants invalides ou tentative temporairement bloquée. Veuillez "
+"réessayer."
+msgstr ""
+
+#: src/Providers/AbstractProvider.php:38
+#, php-format
+msgid "%1$s : configuration incomplète, champs manquants — %2$s."
+msgstr ""
+
+#: src/Providers/AbstractProvider.php:207
+#, php-format
+msgid "Erreur %1$s, réponse HTTP %2$d."
+msgstr ""
+
+#: src/Providers/FacebookProvider.php:35
+msgid "Facebook"
+msgstr ""
+
+#: src/Providers/FacebookProvider.php:127
+msgid "{titre} — {extrait} {lien}"
+msgstr ""
+
+#: src/Providers/InstagramProvider.php:35
+msgid "Instagram"
+msgstr ""
+
+#: src/Providers/InstagramProvider.php:56
+msgid ""
+"Instagram : aucune image mise en avant sur l’article — un média est "
+"obligatoire."
+msgstr ""
+
+#: src/Providers/InstagramProvider.php:72
+msgid ""
+"Instagram : création du conteneur média échouée (réponse inattendue de "
+"l’API)."
+msgstr ""
+
+#: src/Providers/InstagramProvider.php:120
+msgid ""
+"{titre}\n"
+"\n"
+"Lien en bio 🔗 {lien_court}\n"
+"{hashtags}"
+msgstr ""
+
+#: src/Providers/LinkedInProvider.php:45
+msgid "LinkedIn"
+msgstr ""
+
+#: src/Providers/PostPayload.php:52
+msgid "Article introuvable."
+msgstr ""
+
+#: src/Providers/ProviderRegistry.php:77
+#, php-format
+msgid "Réseau social inconnu : %s"
+msgstr ""
+
+#: src/Providers/TikTokProvider.php:34
+msgid "TikTok"
+msgstr ""
+
+#: src/Providers/TikTokProvider.php:53
+msgid ""
+"TikTok : intégration de l’API Content Posting pas encore disponible (app en "
+"attente d’approbation)."
+msgstr ""
+
+#: src/Providers/TikTokProvider.php:82
+msgid "{titre} {hashtags}"
+msgstr ""
+
+#: src/SocialSettings/SettingsPage.php:47
+msgid "Réglages réseaux sociaux"
+msgstr ""
+
+#: src/SocialSettings/SettingsPage.php:50
+msgid "Configuration des connexions de publication."
+msgstr ""
+
+#: src/SocialSettings/SettingsPage.php:51
+msgid ""
+"Les secrets sont chiffrés en base de données ; le .env du plugin reste un "
+"repli pour le développement local."
+msgstr ""
+
+#: src/SocialSettings/SettingsPage.php:57
+msgid ""
+"Les salts de l’installation ont changé : les secrets chiffrés enregistrés ne "
+"sont plus lisibles. Ressaisissez-les ci-dessous pour les re-chiffrer."
+msgstr ""
+
+#: src/SocialSettings/SettingsPage.php:72
+#: src/SocialSettings/SettingsPage.php:106 assets/js/aix-live-editor.js:215
+msgid "Configuré"
+msgstr ""
+
+#: src/SocialSettings/SettingsPage.php:72
+msgid "À faire"
+msgstr ""
+
+#: src/SocialSettings/SettingsPage.php:83
+msgid "Tester la connexion"
+msgstr ""
+
+#: src/SocialSettings/SettingsPage.php:84
+msgid "Enregistrer"
+msgstr ""
+
+#: src/SocialSettings/SettingsPage.php:106
+#: src/SocialSettings/SocialSettingsHooks.php:99
+#: assets/js/aix-live-editor.js:215
+msgid "Non configuré"
+msgstr ""
+
+#: src/SocialSettings/SettingsPage.php:111
+msgid ""
+"Les secrets saisis ici sont chiffrés en base de données. Le fichier .env du "
+"plugin reste un repli pour le développement local."
+msgstr ""
+
+#: src/SocialSettings/SettingsPage.php:205
+msgid "••••••••••••"
+msgstr ""
+
+#: src/SocialSettings/SettingsPage.php:207
+msgid "Afficher ou masquer"
+msgstr ""
+
+#: src/SocialSettings/SettingsPage.php:214
+msgid "enregistré, chiffré en base (laisser vide pour conserver)"
+msgstr ""
+
+#: src/SocialSettings/SettingsPage.php:215
+msgid "non enregistré"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:46
+msgid "Variables :"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:51
+msgid "Application Meta"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:53
+msgid "App ID"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:54
+msgid "App Secret"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:58
+msgid "Version de l’API Graph"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:62
+msgid "URL de base de l’API Graph"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:64
+msgid "Repli si absent du .env."
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:69
+msgid "Page de publication"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:71
+msgid "ID de la page"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:72
+#: src/SocialSettings/SettingsSchema.php:147
+msgid "Page Access Token"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:72
+msgid "Token longue durée, généré après connexion de la page."
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:76
+#: src/SocialSettings/SettingsSchema.php:100
+#: src/SocialSettings/SettingsSchema.php:123
+#: src/SocialSettings/SettingsSchema.php:151
+msgid "Comportement"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:78
+#: src/SocialSettings/SettingsSchema.php:102
+#: src/SocialSettings/SettingsSchema.php:125
+#: src/SocialSettings/SettingsSchema.php:153
+msgid "Publication automatique"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:78
+#: src/SocialSettings/SettingsSchema.php:102
+#: src/SocialSettings/SettingsSchema.php:125
+#: src/SocialSettings/SettingsSchema.php:153
+msgid "Publier dès qu’un article passe en « publié »."
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:79
+msgid "Lien en priorité"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:79
+msgid "Placer le permalien en tête du message plutôt qu’en fin."
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:80
+#: src/SocialSettings/SettingsSchema.php:110
+msgid "Gabarit de message"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:81
+msgid "Délai d’expiration (secondes)"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:87
+msgid "Application LinkedIn"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:89
+msgid "Client ID"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:90
+msgid "Access Token"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:90
+msgid ""
+"Token OAuth (~60 jours), scope w_organization_social ou w_member_social."
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:91
+#: src/SocialSettings/SettingsSchema.php:119
+msgid "Client Secret"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:92
+msgid "ID de l’organisation (page entreprise)"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:94
+msgid "Format URN. Vierge = publication sur le profil personnel."
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:96
+msgid "URL de base de l’API"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:106
+msgid "Visibilité par défaut"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:107
+msgid "Public"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:107
+msgid "Connexions uniquement"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:116
+msgid "Application TikTok"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:118
+msgid "Client Key"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:129
+msgid "Confidentialité de la vidéo"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:131
+msgid "Publique"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:132
+msgid "Amis seulement"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:133
+msgid "Privée (auto-postée)"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:137
+msgid "Hashtags par défaut"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:143
+msgid "Compte professionnel"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:145
+msgid "ID du compte Instagram Business"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:146
+msgid "Page Facebook liée"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:147
+msgid "Partagé avec Facebook : même app Meta, même page."
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:154
+msgid "Carrousels"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:154
+msgid "Publier les images de l’article en carrousel."
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:155
+msgid "Légende"
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:157
+msgid ""
+"Les liens cliquables ne sont pas supportés en légende : {lien_court} pointe "
+"vers le lien en bio."
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:243
+#, php-format
+msgid ""
+"Publication sur les pages via l’API Graph. L’app doit avoir les permissions "
+"%1$s, %2$s."
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:248
+#, php-format
+msgid ""
+"Publication via l’API Posts. L’app doit avoir %1$s (page entreprise) ou %2$s "
+"(profil) approuvés."
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:252
+msgid ""
+"Publication vidéo via l’API Content Posting. Nécessite une app approuvée et "
+"un compte Business."
+msgstr ""
+
+#: src/SocialSettings/SettingsSchema.php:253
+msgid ""
+"Publication via l’API Instagram Graph — compte professionnel rattaché à une "
+"page Facebook."
+msgstr ""
+
+#: src/SocialSettings/SocialSettingsHooks.php:62
+#: src/SocialSettings/SocialSettingsHooks.php:63
+#: assets/js/aix-live-editor.js:241
+msgid "Réseaux sociaux"
+msgstr ""
+
+#: src/SocialSettings/SocialSettingsHooks.php:96
+msgid "Réglages enregistrés."
+msgstr ""
+
+#: src/SocialSettings/SocialSettingsHooks.php:97
+msgid "Test de connexion en cours…"
+msgstr ""
+
+#: src/SocialSettings/SocialSettingsHooks.php:98
+msgid "Connecté"
+msgstr ""
+
+#: src/SocialSettings/SocialSettingsHooks.php:100
+msgid "Erreur réseau : test impossible."
+msgstr ""
+
+#: src/SocialSettings/SocialSettingsHooks.php:101
+msgid "Configuration incomplète — complétez les champs requis."
+msgstr ""
+
+#: src/SocialSettings/SocialSettingsHooks.php:111
+#: src/SocialSettings/SocialSettingsHooks.php:122
+#: src/SocialSettings/SocialSettingsHooks.php:156
+msgid "Accès refusé."
+msgstr ""
+
+#: src/SocialSettings/SocialSettingsHooks.php:164
+msgid "Réseau social inconnu."
+msgstr ""
+
+#: src/SocialSettings/SocialSettingsHooks.php:169
+msgid "Configuration incomplète — champs manquants :"
+msgstr ""
+
+#: src/SocialSettings/SocialSettingsHooks.php:175
+msgid "Connexion vérifiée."
+msgstr ""
+
+#: templates/login/form.php:41
+msgid "Se souvenir de moi"
+msgstr ""
+
+#: assets/js/aix-live-editor.js:163
+msgid "Fonctionnalité de publication à venir."
+msgstr ""
+
+#: assets/js/aix-live-editor.js:177
+msgid "Configurer dans Réglages"
+msgstr ""
+
+#: assets/js/aix-live-editor.js:254
+msgid "Diffuser cet article vers les réseaux configurés :"
+msgstr ""
+
+#: assets/js/aix-live-editor.js:270
+msgid "Envoi en cours…"
+msgstr ""
+
+#: assets/js/aix-live-editor.js:271
+msgid "Publier sur les réseaux"
+msgstr ""
+
+#: assets/js/aix-live-editor.js:280
+#, javascript-format
+msgid ""
+"%d réseau(x) sélectionné(s) — l’article est en ligne, la diffusion est "
+"possible."
+msgstr ""
+
+#: assets/js/aix-live-editor.js:288
+msgid "L’article doit être publié pour être diffusé sur les réseaux sociaux."
+msgstr ""

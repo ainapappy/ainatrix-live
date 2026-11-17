@@ -2,6 +2,16 @@
 /**
  * Classe de hooks de la fonctionnalité UX + sécurité de connexion.
  *
+ * Modèle d'application (audit 2026-11-17, SEC-01) :
+ * - le verrou rate-limit est appliqué via le filtre `wp_authenticate_user`
+ *   (résolution du compte faite, AVANT la vérification du mot de passe) :
+ *   un WP_Error retourné là ne peut pas être écrasé par le cœur, même à
+ *   identifiants valides ;
+ * - le nonce est ré-appliqué en fin de chaîne `authenticate` (priorité 100,
+ *   après wp_authenticate_spam_check à 99) : une soumission à identifiants
+ *   valides sans nonce est refusée — le formulaire natif devient réellement
+ *   inert, indépendamment de l'état du CSS.
+ *
  * @package ainatrix
  */
 
@@ -17,7 +27,6 @@ if (!defined('ABSPATH')) {
 
 final class LoginExperienceHooks implements HookSubscriberInterface {
 
-    private const ERROR_MESSAGE = 'Identifiants invalides ou tentative temporairement bloquée. Veuillez réessayer.';
     private const NONCE_ACTION = 'aix_live_login_form';
     private const NONCE_FIELD = 'aix_live_login_nonce';
 
@@ -33,7 +42,8 @@ final class LoginExperienceHooks implements HookSubscriberInterface {
         add_filter('login_title', [$this, 'filterPageTitle'], 10, 2);
         add_action('login_init', [$this, 'maybeRedirectAuthenticatedUser']);
 
-        add_filter('authenticate', [$this, 'blockWhenRateLimited'], 5, 3);
+        add_filter('wp_authenticate_user', [$this, 'blockUserWhenRateLimited'], 10, 2);
+        add_filter('authenticate', [$this, 'enforceLoginContract'], 100, 1);
         add_action('wp_login_failed', [$this, 'recordFailedLogin'], 10, 2);
         add_action('wp_login', [$this, 'resetRateLimitOnSuccess'], 10, 2);
         add_filter('login_errors', [$this, 'filterLoginErrors']);
@@ -47,12 +57,6 @@ final class LoginExperienceHooks implements HookSubscriberInterface {
             'aix-live-login',
             AIX_LIVE_URL . 'assets/css/aix-live-login.css',
             [],
-            AIX_LIVE_VERSION
-        );
-        wp_enqueue_style(
-            'aix-live-login-template',
-            AIX_LIVE_URL . 'templates/login/styles.css',
-            ['aix-live-login'],
             AIX_LIVE_VERSION
         );
         wp_enqueue_script(
@@ -180,22 +184,20 @@ final class LoginExperienceHooks implements HookSubscriberInterface {
     }
 
     /**
-     * Bloque l'authentification en cas de lock actif.
+     * Verrou utilisateur : appelé via `wp_authenticate_user`, c'est-à-dire une
+     * fois le compte résolu (login OU e-mail) et AVANT la vérification du mot
+     * de passe. Un WP_Error ici est définitif : le cœur ne peut pas le
+     * surcharger, même si les identifiants soumis sont valides (audit SEC-01).
      *
      * @param \WP_User|\WP_Error|null $user
-     * @return \WP_User|\WP_Error|null
      */
-    public function blockWhenRateLimited($user, string $username, string $password) {
-        if (!$this->isStandardLoginPost()) {
+    public function blockUserWhenRateLimited($user, string $password = '') {
+        if (!$user instanceof \WP_User || !$this->isStandardLoginPost()) {
             return $user;
         }
-        if (!$this->isCustomNonceValid()) {
-            $this->applyFailureDelay();
-            return new \WP_Error('aix_live_invalid_login_request', __(self::ERROR_MESSAGE, 'ainatrix'));
-        }
 
-        $normalizedUsername = $this->resolveUsername($username);
-        $ipAddress = $this->resolveIpAddress();
+        $normalizedUsername = LoginInput::username($user->user_login);
+        $ipAddress = LoginInput::ipAddress();
 
         if (!$this->rateLimiter->isLocked($normalizedUsername, $ipAddress)) {
             return $user;
@@ -209,7 +211,30 @@ final class LoginExperienceHooks implements HookSubscriberInterface {
         );
         $this->applyFailureDelay();
 
-        return new \WP_Error('aix_live_rate_limited', __(self::ERROR_MESSAGE, 'ainatrix'));
+        return new \WP_Error('aix_live_rate_limited', $this->errorMessage());
+    }
+
+    /**
+     * Contrat de soumission : nonce obligatoire sur `action=login`, appliqué en
+     * FIN de chaîne `authenticate` (priorité 100, après wp_authenticate_spam_check).
+     * Placé ici, le refus ne peut pas être écrasé par les filtres du cœur : une
+     * soumission à identifiants valides sans nonce échoue, ce qui rend le
+     * formulaire natif réellement inert côté serveur (audit SEC-01/SEC-02).
+     *
+     * @param \WP_User|\WP_Error|null $user
+     * @return \WP_User|\WP_Error|null
+     */
+    public function enforceLoginContract($user) {
+        if (!$this->isStandardLoginPost()) {
+            return $user;
+        }
+        if (!$this->isCustomNonceValid()) {
+            $this->applyFailureDelay();
+
+            return new \WP_Error('aix_live_invalid_login_request', $this->errorMessage());
+        }
+
+        return $user;
     }
 
     /**
@@ -219,12 +244,14 @@ final class LoginExperienceHooks implements HookSubscriberInterface {
         if (!$this->isStandardLoginPost()) {
             return;
         }
-        if ($error instanceof \WP_Error && $error->get_error_code() === 'aix_live_rate_limited') {
+        if ($error instanceof \WP_Error && in_array($error->get_error_code(), ['aix_live_rate_limited', 'aix_live_invalid_login_request'], true)) {
+            // Échec déjà sanctionné (verrou actif ou nonce absent) : ne pas
+            // re-compter ni re-delay, sinon double pénalité de worker (SEC-04).
             return;
         }
 
-        $normalizedUsername = $this->resolveUsername($username);
-        $ipAddress = $this->resolveIpAddress();
+        $normalizedUsername = LoginInput::username($username);
+        $ipAddress = LoginInput::ipAddress();
         $this->rateLimiter->recordFailure($normalizedUsername, $ipAddress);
         $this->applyFailureDelay();
 
@@ -240,7 +267,7 @@ final class LoginExperienceHooks implements HookSubscriberInterface {
      * Réinitialise le compteur à la connexion réussie.
      */
     public function resetRateLimitOnSuccess(string $userLogin, \WP_User $user): void {
-        $this->rateLimiter->reset($this->resolveUsername($userLogin), $this->resolveIpAddress());
+        $this->rateLimiter->reset(LoginInput::username($userLogin), LoginInput::ipAddress());
     }
 
     /**
@@ -254,7 +281,7 @@ final class LoginExperienceHooks implements HookSubscriberInterface {
         return sprintf(
             '<strong>%1$s</strong> %2$s',
             esc_html__('Erreur :', 'ainatrix'),
-            esc_html__(self::ERROR_MESSAGE, 'ainatrix')
+            esc_html($this->errorMessage())
         );
     }
 
@@ -276,25 +303,22 @@ final class LoginExperienceHooks implements HookSubscriberInterface {
         return isset($_POST['log'], $_POST['pwd']);
     }
 
-    private function resolveUsername(string $username): string {
-        if ($username === '' && isset($_POST['log']) && is_string($_POST['log'])) {
-            $username = (string) wp_unslash($_POST['log']);
-        }
-
-        $username = trim(sanitize_text_field($username));
-        if ($username === '') {
-            return '__empty__';
-        }
-
-        return function_exists('mb_strtolower') ? mb_strtolower($username) : strtolower($username);
+    /**
+     * Message d'erreur générique (anti-énumération). Littéral inline : une
+     * constante passée à __() n'est pas extraite par les outils i18n (SEC-10).
+     */
+    private function errorMessage(): string {
+        return __('Identifiants invalides ou tentative temporairement bloquée. Veuillez réessayer.', 'ainatrix');
     }
 
-    private function resolveIpAddress(): string {
-        $ipAddress = trim(sanitize_text_field((string) wp_unslash($_SERVER['REMOTE_ADDR'] ?? '')));
-
-        return filter_var($ipAddress, FILTER_VALIDATE_IP) ? $ipAddress : '0.0.0.0';
-    }
-
+    /**
+     * Rôle réel du nonce (audit SEC-03) : ralentisseur anti-bot et marqueur
+     * « formulaire custom utilisé ». Un nonce anonyme n'est PAS une protection
+     * CSRF (déorable sans session : n'importe qui peut fetcher wp-login.php et
+     * réobtenir le nonce user 0). Opérationnel : TTL nonce 12–24 h — ne jamais
+     * mettre wp-login.php en cache CDN/page, sinon nonce périmé pour tous.
+     * Kill switch de secours si un flux tiers poste sans nonce sur wp-login.php.
+     */
     private function isCustomNonceValid(): bool {
         $required = (bool) apply_filters('aix_live_login_require_nonce', true);
         if (!$required) {
@@ -324,9 +348,14 @@ final class LoginExperienceHooks implements HookSubscriberInterface {
         return sanitize_text_field((string) wp_unslash($_POST['log']));
     }
 
+    /**
+     * Délai aléatoire sur échec : masque le timing bcrypt (anti-énumération).
+     * Fenêtre volontairement courte (SEC-04) : un délai long endort un worker
+     * PHP par requête et devient un vecteur d'épuisement de pool sous attaque.
+     */
     private function applyFailureDelay(): void {
-        $min = (int) apply_filters('aix_live_login_delay_min_us', 250000);
-        $max = (int) apply_filters('aix_live_login_delay_max_us', 700000);
+        $min = (int) apply_filters('aix_live_login_delay_min_us', 100000);
+        $max = (int) apply_filters('aix_live_login_delay_max_us', 300000);
 
         if ($min < 0) {
             $min = 0;

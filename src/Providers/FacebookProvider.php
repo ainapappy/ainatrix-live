@@ -38,9 +38,8 @@ final class FacebookProvider extends AbstractProvider {
     public function testConnection(): ProviderResult {
         try {
             $data = $this->request('GET', $this->apiUrl($this->config()->string('page_id'), [
-                'fields'       => 'name',
-                'access_token' => $this->secret('PAGE_TOKEN'),
-            ]));
+                'fields' => 'name',
+            ]), [], ['Authorization' => 'Bearer ' . $this->secret('PAGE_TOKEN')]);
         } catch (ProviderException $exception) {
             return ProviderResult::failure($exception->getMessage(), $exception->httpCode());
         }
@@ -53,9 +52,8 @@ final class FacebookProvider extends AbstractProvider {
 
     protected function doPublish(PostPayload $payload, string $message): ProviderResult {
         $data = $this->request('POST', $this->apiUrl($this->config()->string('page_id') . '/feed'), [
-            'message'      => $this->applyLinkFirst($payload, $message),
-            'access_token' => $this->secret('PAGE_TOKEN'),
-        ]);
+            'message' => $this->applyLinkFirst($payload, $message),
+        ], ['Authorization' => 'Bearer ' . $this->secret('PAGE_TOKEN')]);
 
         $remoteId = (string) ($data['id'] ?? '');
 
@@ -83,8 +81,10 @@ final class FacebookProvider extends AbstractProvider {
 
     /**
      * URL d'un endpoint Graph : {graph_url}/{version}/{chemin}.
+     * Le token voyage en en-tête Authorization (audit SEC-07) : jamais en
+     * query string, où il finirait dans les logs serveurs et proxies.
      *
-     * @param array<string, string> $query Paramètres de requête (access_token…).
+     * @param array<string, string> $query Paramètres de requête (fields…).
      */
     private function apiUrl(string $path, array $query = []): string {
         $version = $this->config()->string('api_version', self::DEFAULT_API_VERSION);
@@ -119,7 +119,7 @@ final class FacebookProvider extends AbstractProvider {
     /**
      * @return array<string, mixed>
      */
-    protected function defaults(): array {
+    public function defaultSettings(): array {
         return [
             'page_id'     => '',
             'api_version' => self::DEFAULT_API_VERSION,

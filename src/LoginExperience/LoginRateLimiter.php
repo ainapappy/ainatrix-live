@@ -13,6 +13,18 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+/**
+ * Compteur d'échecs par bucket (username|IP) et par IP seule, stocké en
+ * transients. Normalisation des entrées déléguée à {@see LoginInput} (source
+ * unique — audit QA-04).
+ *
+ * Limites connues et assumées (audit SEC-05) :
+ * - Compteur NON atomique : get_transient → incrément → set_transient. Des
+ *   requêtes parfaitement parallèles peuvent sous-compter (le bucket IP à
+ *   20 tentatives limite l'amplification). Avec un object cache externe,
+ *   une évolution possible est wp_cache_incr().
+ * - REMOTE_ADDR doit être l'IP réelle du client (cf. {@see LoginInput::ipAddress()}).
+ */
 final class LoginRateLimiter {
 
     private const TRANSIENT_PREFIX = 'aix_live_login_rl_';
@@ -105,10 +117,14 @@ final class LoginRateLimiter {
     }
 
     /**
+     * TTL dérivé des MÊMES bornes que le bucket écrit (audit SEC-05 : le TTL
+     * du bucket IP utilisait les défauts « utilisateur », tronquant la fenêtre
+     * si les filtres IP étaient personnalisés).
+     *
      * @param array{attempts?: int, first_attempt?: int, locked_until?: int} $bucket
      */
-    private function setBucket(string $bucketKey, array $bucket): void {
-        $ttl = max($this->getWindowSeconds(), $this->getLockSeconds());
+    private function setBucket(string $bucketKey, array $bucket, int $windowSeconds, int $lockSeconds): void {
+        $ttl = max($windowSeconds, $lockSeconds);
         $lockedUntil = (int) ($bucket['locked_until'] ?? 0);
         $remaining = $lockedUntil - time();
         if ($remaining > 0) {
@@ -123,18 +139,18 @@ final class LoginRateLimiter {
     }
 
     private function buildBucketKey(string $username, string $ipAddress): string {
-        return hash('sha256', $this->normalizeIpAddress($ipAddress) . '|' . $this->normalizeUsername($username));
+        return hash('sha256', LoginInput::ip($ipAddress) . '|' . LoginInput::username($username));
     }
 
     private function buildIpBucketKey(string $ipAddress): string {
-        return hash('sha256', $this->normalizeIpAddress($ipAddress) . '|__ip_only__');
+        return hash('sha256', LoginInput::ip($ipAddress) . '|__ip_only__');
     }
 
     private function updateBucket(string $bucketKey, int $maxAttempts, int $windowSeconds, int $lockSeconds, int $now): void {
         $bucket = $this->getBucket($bucketKey);
         $lockedUntil = (int) ($bucket['locked_until'] ?? 0);
         if ($lockedUntil > $now) {
-            $this->setBucket($bucketKey, $bucket);
+            $this->setBucket($bucketKey, $bucket, $windowSeconds, $lockSeconds);
 
             return;
         }
@@ -159,21 +175,6 @@ final class LoginRateLimiter {
             $bucket['locked_until'] = $now + $lockSeconds;
         }
 
-        $this->setBucket($bucketKey, $bucket);
-    }
-
-    private function normalizeUsername(string $username): string {
-        $username = trim(sanitize_text_field($username));
-        if ($username === '') {
-            return '__empty__';
-        }
-
-        return function_exists('mb_strtolower') ? mb_strtolower($username) : strtolower($username);
-    }
-
-    private function normalizeIpAddress(string $ipAddress): string {
-        $ipAddress = trim(sanitize_text_field($ipAddress));
-
-        return filter_var($ipAddress, FILTER_VALIDATE_IP) ? $ipAddress : '0.0.0.0';
+        $this->setBucket($bucketKey, $bucket, $windowSeconds, $lockSeconds);
     }
 }

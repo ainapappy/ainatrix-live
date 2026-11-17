@@ -7,7 +7,7 @@ if (!defined('ABSPATH')) {
 /**
  * Version du plugin — à synchroniser avec le champ Version: de ainatrix-live.php.
  */
-define('AIX_LIVE_VERSION', '2.16.0');
+define('AIX_LIVE_VERSION', '2.16.1');
 
 /**
  * Chemins disque du plugin (slash final).

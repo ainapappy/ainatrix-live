@@ -16,9 +16,14 @@ if (!defined('ABSPATH')) {
 /**
  * Stockage des secrets (tokens, client secrets) saisis dans l'UI d'administration.
  *
- * - Persistance : option `aix_live_secrets` (autoload off), chaque valeur chiffrée
- *   avec sodium (clé secrètebox dérivée des salts de l'installation — la clé ne
- *   vit pas en base, un dump SQL seul ne révèle donc aucun token) ;
+ * - Persistance : option `aix_live_secrets` (autoload off), chaque valeur
+ *   chiffrée avec sodium (clé secrètebox dérivée des salts de l'installation —
+ *   la clé ne vit pas en base, un dump SQL seul ne révèle donc aucun token) ;
+ * - Chaque blob embarque un condensat de contrôle de la clé (audit SEC-08) :
+ *   si les salts de l'installation changent, la lecture échoue silencieusement
+ *   (repli .env) au lieu de lever des erreurs sodium, et {@see self::status()}
+ *   permet à l'UI d'afficher l'alerte « ressaisir les secrets ». Format
+   historique (≤ 2.16.0, blob brut sans condensat) toujours lisible ;
  * - Lecture : base chiffrée d'abord, repli `.env` (via {@see Secrets}) pour le
  *   développement local — même ordre UI → .env que la configuration non secrète ;
  * - Les valeurs en clair ne sortent jamais d'ici : ni log, ni HTML, ni exception.
@@ -28,6 +33,9 @@ final class SecretStore {
     /** Clé d'option WordPress regroupant les secrets chiffrés. */
     public const OPTION_KEY = 'aix_live_secrets';
 
+    /** Longueur du condensat de contrôle de la clé, en caractères hexadécimaux. */
+    private const FINGERPRINT_LENGTH = 16;
+
     /**
      * True si l'extension sodium est disponible (chiffrement opérationnel).
      */
@@ -36,13 +44,55 @@ final class SecretStore {
     }
 
     /**
+     * État du coffre vis-à-vis de la clé courante :
+     * - 'empty'   : aucun secret chiffré en base ;
+     * - 'unknown' : uniquement des blobs au format historique (sans condensat) ;
+     * - 'ok'      : blobs au format nouveau, tous déchiffrables ;
+     * - 'rotated' : au moins un blob illisible — les salts ont changé depuis
+     *   le chiffrement, les secrets concernés doivent être ressaisis.
+     */
+    public static function status(): string {
+        $option = get_option(self::OPTION_KEY);
+        if (!is_array($option)) {
+            return 'empty';
+        }
+
+        $state = 'empty';
+        foreach ($option as $entries) {
+            if (!is_array($entries)) {
+                continue;
+            }
+            foreach ($entries as $entry) {
+                if (is_array($entry)) {
+                    if (!hash_equals((string) ($entry['key'] ?? ''), self::keyFingerprint())) {
+                        return 'rotated';
+                    }
+                    $state = 'ok';
+                } elseif (is_string($entry) && $entry !== '' && $state === 'empty') {
+                    $state = 'unknown';
+                }
+            }
+        }
+
+        return $state;
+    }
+
+    /**
      * Lit un secret : base chiffrée d'abord, repli .env.
      */
     public static function get(string $providerKey, string $suffix): string {
         $option = get_option(self::OPTION_KEY);
-        $blob = is_array($option) ? ($option[$providerKey][$suffix] ?? '') : '';
-        if (is_string($blob) && $blob !== '') {
-            $plain = self::decrypt($blob);
+        $entry = is_array($option) ? ($option[$providerKey][$suffix] ?? '') : '';
+        if (is_array($entry)) {
+            if (hash_equals((string) ($entry['key'] ?? ''), self::keyFingerprint())) {
+                $plain = self::decrypt((string) ($entry['blob'] ?? ''));
+                if ($plain !== '') {
+                    return $plain;
+                }
+            }
+        } elseif (is_string($entry) && $entry !== '') {
+            // Format historique : blob brut sans condensat de contrôle.
+            $plain = self::decrypt($entry);
             if ($plain !== '') {
                 return $plain;
             }
@@ -59,7 +109,7 @@ final class SecretStore {
     }
 
     /**
-     * Enregistre (ou remplace) un secret, chiffré.
+     * Enregistre (ou remplace) un secret, chiffré avec la clé courante.
      */
     public static function set(string $providerKey, string $suffix, string $plain): bool {
         if (!self::available() || $plain === '') {
@@ -71,20 +121,12 @@ final class SecretStore {
         if (!isset($option[$providerKey]) || !is_array($option[$providerKey])) {
             $option[$providerKey] = [];
         }
-        $option[$providerKey][$suffix] = self::encrypt($plain);
+        $option[$providerKey][$suffix] = [
+            'blob' => self::encrypt($plain),
+            'key'  => self::keyFingerprint(),
+        ];
 
         return update_option(self::OPTION_KEY, $option, false);
-    }
-
-    /**
-     * Supprime un secret du coffre (le repli .env redevient effectif).
-     */
-    public static function remove(string $providerKey, string $suffix): void {
-        $option = get_option(self::OPTION_KEY);
-        if (is_array($option) && isset($option[$providerKey][$suffix])) {
-            unset($option[$providerKey][$suffix]);
-            update_option(self::OPTION_KEY, $option, false);
-        }
     }
 
     /**
@@ -100,6 +142,14 @@ final class SecretStore {
      */
     private static function key(): string {
         return hash('sha256', wp_salt('auth') . '|' . wp_salt('logged_in'), true);
+    }
+
+    /**
+     * Condensat de contrôle de la clé, stocké à côté de chaque blob (jamais la
+     * clé elle-même) : permet de détecter une rotation des salts (audit SEC-08).
+     */
+    private static function keyFingerprint(): string {
+        return substr(hash('sha256', self::key()), 0, self::FINGERPRINT_LENGTH);
     }
 
     private static function encrypt(string $plain): string {

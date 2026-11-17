@@ -10,7 +10,7 @@
  * Plugin URI: https://www.ainatrix.com
  * Description: pluging live v1 for ainatrix
  * Author: Aina Papy, Mevasoa
- * Version: 2.16.0
+ * Version: 2.16.1
  * Author URI: https://www.ainatrix.com/papy
  * Text Domain: ainatrix
  * Domain Path: /languages

@@ -20,8 +20,11 @@ if (!defined('ABSPATH')) {
 
 /**
  * Construit l'objet localisé `aixLiveEditor` : liste des réseaux (icône de
- * marque, label, compte cible, état de configuration), URL de la page de
- * réglages et nonce du futur appel de publication.
+ * marque, label, compte cible, état de configuration) et URL de la page de
+ * réglages. Pas de nonce injecté tant qu'aucun endpoint de publication n'est
+ * branché (audit QA-07) : `EditorPanelHooks::PUBLISH_NONCE_ACTION` reste la
+ * convention pour le futur appel, le nonce sera vérifié côté serveur à ce
+ * moment-là.
  */
 final class EditorContext {
 
@@ -53,7 +56,6 @@ final class EditorContext {
 
         return [
             'settingsUrl' => admin_url('admin.php?page=' . SocialSettingsHooks::PAGE_SLUG),
-            'nonce'       => wp_create_nonce(EditorPanelHooks::PUBLISH_NONCE_ACTION),
             'networks'    => $networks,
         ];
     }
