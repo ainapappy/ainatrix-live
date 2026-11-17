@@ -11,6 +11,7 @@ namespace AinatrixLive;
 
 use AinatrixLive\EditorPanel\EditorPanelHooks;
 use AinatrixLive\Hooks\HookLoader;
+use AinatrixLive\LoginExperience\LoginExperienceHooks;
 use AinatrixLive\SocialSettings\SocialSettingsHooks;
 
 if (!defined('ABSPATH')) {
@@ -27,6 +28,7 @@ final class Plugin {
         (new HookLoader(
             new SocialSettingsHooks(),
             new EditorPanelHooks(),
+            new LoginExperienceHooks(),
         ))->register();
     }
 }

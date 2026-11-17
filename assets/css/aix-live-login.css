@@ -1,0 +1,127 @@
+/*
+ * Expérience premium pour wp-login.php (feature LoginExperience).
+ */
+
+body.login.aix-live-login-premium {
+  --aix-login-bg: #0f172a;
+  --aix-login-bg-soft: #1e293b;
+  --aix-login-surface: #ffffff;
+  --aix-login-border: #d5d9e0;
+  --aix-login-text: #0f172a;
+  --aix-login-muted: #64748b;
+  --aix-login-primary: #2563eb;
+  --aix-login-primary-hover: #1d4ed8;
+  --aix-login-danger: #b91c1c;
+
+  background:
+    radial-gradient(circle at 15% 20%, rgba(59, 130, 246, .22), transparent 38%),
+    radial-gradient(circle at 80% 10%, rgba(45, 212, 191, .18), transparent 35%),
+    linear-gradient(135deg, var(--aix-login-bg), var(--aix-login-bg-soft));
+  background-attachment: fixed;
+}
+
+body.login.aix-live-login-premium #login {
+  width: min(92vw, 408px);
+  padding: 7vh 0 0;
+}
+
+body.login.aix-live-login-premium h1 a {
+  width: 280px;
+  height: 64px;
+  margin-bottom: 26px;
+  background-image: none;
+  background-color: transparent;
+  border-radius: 12px;
+  color: #f8fafc;
+  text-indent: 0;
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 64px;
+  letter-spacing: .01em;
+  text-decoration: none;
+  text-align: center;
+  text-shadow: 0 8px 24px rgba(15, 23, 42, .45);
+}
+
+body.login.aix-live-login-premium #loginform,
+body.login.aix-live-login-premium #lostpasswordform,
+body.login.aix-live-login-premium #registerform,
+body.login.aix-live-login-premium #resetpassform {
+  margin-top: 0;
+  border: 1px solid rgba(255, 255, 255, .22);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .96);
+  box-shadow: 0 18px 45px rgba(15, 23, 42, .34);
+  backdrop-filter: blur(3px);
+}
+
+body.login.aix-live-login-premium .input,
+body.login.aix-live-login-premium input[type="text"],
+body.login.aix-live-login-premium input[type="password"] {
+  border: 1px solid var(--aix-login-border);
+  border-radius: 10px;
+  transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+
+body.login.aix-live-login-premium .input:focus,
+body.login.aix-live-login-premium input[type="text"]:focus,
+body.login.aix-live-login-premium input[type="password"]:focus {
+  border-color: var(--aix-login-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, .2);
+  transform: translateY(-1px);
+}
+
+body.login.aix-live-login-premium .button.button-primary {
+  min-height: 40px;
+  border-color: var(--aix-login-primary);
+  background: var(--aix-login-primary);
+  border-radius: 10px;
+  font-weight: 600;
+  transition: background-color .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+
+body.login.aix-live-login-premium .button.button-primary:hover,
+body.login.aix-live-login-premium .button.button-primary:focus {
+  border-color: var(--aix-login-primary-hover);
+  background: var(--aix-login-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(37, 99, 235, .28);
+}
+
+body.login.aix-live-login-premium .button.button-primary:disabled,
+body.login.aix-live-login-premium.is-submitting .button.button-primary {
+  opacity: .75;
+  cursor: wait;
+}
+
+body.login.aix-live-login-premium #login_error,
+body.login.aix-live-login-premium .message {
+  border-radius: 10px;
+}
+
+body.login.aix-live-login-premium #login_error {
+  border-left-color: var(--aix-login-danger);
+}
+
+body.login.aix-live-login-premium .dashicons {
+  color: var(--aix-login-muted);
+}
+
+body.login.aix-live-login-premium #nav a,
+body.login.aix-live-login-premium #backtoblog a {
+  color: #cbd5e1;
+}
+
+body.login.aix-live-login-premium #nav a:hover,
+body.login.aix-live-login-premium #backtoblog a:hover,
+body.login.aix-live-login-premium #nav a:focus,
+body.login.aix-live-login-premium #backtoblog a:focus {
+  color: #ffffff;
+}
+
+@media (max-width: 782px) {
+  body.login.aix-live-login-premium h1 a {
+    width: 240px;
+    font-size: 30px;
+  }
+}
