@@ -38,6 +38,15 @@ jQuery(function ($) {
     var $field = $form.find('input[data-aix-recaptcha-site-key]').first();
     if (!$field.length) { return; }
 
+    // Soumission captcha déjà engagée (double-clic, Entrée répétée) : ne pas
+    // relancer execute ni un second POST. Verrou distinct de aix-submitted
+    // (posé par aix-live-login.js sur le PREMIER submit : ce handler doit
+    // encore dérouler le flux captcha pour l'événement en cours).
+    if ($form.data('aix-recaptcha-started')) {
+      event.preventDefault();
+      return;
+    }
+
     var data = fieldData($field);
     if (!data.siteKey) { return; }
 
@@ -48,6 +57,22 @@ jQuery(function ($) {
     }
 
     event.preventDefault();
+    $form.data('aix-recaptcha-started', true);
+
+    // Marqueur « navigation engagée » : sert au chien de garde ci-dessous pour
+    // ne pas re-soumettre alors que le POST natif est déjà parti.
+    var markSubmitted = function () {
+      $form.data('aix-submitted-done', true);
+    };
+
+    // Filet : si execute ne se résout jamais (réseau Google mourant au milieu
+    // d'une requête), débloquer le formulaire en soumettant sans token plutôt
+    // que de laisser un bouton verrouillé à jamais.
+    window.setTimeout(function () {
+      if (!$form.data('aix-submitted-done')) {
+        submitWithoutToken($form, $field);
+      }
+    }, 10000);
 
     window.grecaptcha.ready(function () {
       window.grecaptcha
@@ -55,12 +80,15 @@ jQuery(function ($) {
         .then(function (token) {
           if (token) {
             $field.val(token);
+            markSubmitted();
             submitNative($form[0]);
           } else {
+            markSubmitted();
             submitWithoutToken($form, $field);
           }
         })
         .catch(function () {
+          markSubmitted();
           submitWithoutToken($form, $field);
         });
     });

@@ -17,7 +17,22 @@ jQuery(function ($) {
       $(this).closest('p').removeClass('is-focused');
     });
 
-  $forms.on('submit', function () {
+  // Verrou de soumission unique (hotfix 2026-11-17 « page blanche après
+  // login ») : pendant la fenêtre async de grecaptcha.execute (~2-3 s), un
+  // double-clic ou une seconde pression sur Entrée déclenchait une seconde
+  // soumission ; le navigateur avortait le premier POST en vol (réponse vide
+  // rendue à l'écran, URL figée sur wp-login.php) pendant que le second
+  // réussissait côté serveur. Premier submit : verrou + bouton désactivé ;
+  // soumissions suivantes : avortées. submitNative() du runner reCAPTCHA
+  // contourne l'événement submit et n'est pas affectée.
+  $forms.on('submit', function (event) {
+    var $form = $(this);
+    if ($form.data('aix-submitted')) {
+      event.preventDefault();
+      return;
+    }
+    $form.data('aix-submitted', true);
+    $form.find('button[type="submit"], input[type="submit"]').prop('disabled', true);
     $body.addClass('is-submitting');
   });
 
