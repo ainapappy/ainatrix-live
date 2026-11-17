@@ -169,6 +169,7 @@ final class LoginExperienceHooks implements HookSubscriberInterface {
      * Redirige un utilisateur déjà connecté uniquement sur l'action login.
      */
     public function maybeRedirectAuthenticatedUser(): void {
+        error_log('AIX-TRACE login_init method=' . ($_SERVER['REQUEST_METHOD'] ?? '?') . ' action=' . ($_REQUEST['action'] ?? '?')); // TEMPORAIRE HOTFIX
         if (!is_user_logged_in() || !$this->isStandardLoginAction()) {
             return;
         }
@@ -224,6 +225,7 @@ final class LoginExperienceHooks implements HookSubscriberInterface {
      * @return \WP_User|\WP_Error|null
      */
     public function enforceLoginContract($user) {
+        error_log('AIX-TRACE authenticate p100 atteint'); // TEMPORAIRE HOTFIX
         if (!$this->isStandardLoginPost()) {
             return $user;
         }
@@ -298,6 +300,7 @@ final class LoginExperienceHooks implements HookSubscriberInterface {
      * Réinitialise le compteur à la connexion réussie.
      */
     public function resetRateLimitOnSuccess(string $userLogin, \WP_User $user): void {
+        error_log('AIX-TRACE wp_login OK (auth réussie) user=' . $userLogin); // TEMPORAIRE HOTFIX
         $this->rateLimiter->reset(LoginInput::username($userLogin), LoginInput::ipAddress());
     }
 
