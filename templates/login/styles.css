@@ -1,0 +1,47 @@
+/*
+ * Styles du template login personnalisé.
+ */
+
+.aix-login-template {
+  margin: 0 0 16px;
+  padding: 14px 16px;
+  border: 1px solid var(--aix-login-border);
+  border-radius: 16px;
+  background: color-mix(in oklab, var(--aix-login-surface), transparent 12%);
+  backdrop-filter: blur(10px);
+}
+
+.aix-login-template__badge {
+  display: inline-flex;
+  margin: 0 0 10px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--aix-login-text-strong);
+  border: 1px solid color-mix(in oklab, var(--aix-login-primary), transparent 70%);
+  background: color-mix(in oklab, var(--aix-login-primary), transparent 82%);
+}
+
+.aix-login-template__title {
+  margin: 0 0 6px;
+  font-size: 20px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--aix-login-text-strong);
+}
+
+.aix-login-template__headline {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--aix-login-text);
+}
+
+.aix-login-template__description {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--aix-login-muted);
+}

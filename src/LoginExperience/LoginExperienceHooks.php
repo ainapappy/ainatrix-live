@@ -24,6 +24,7 @@ final class LoginExperienceHooks implements HookSubscriberInterface {
     public function register(): void {
         add_action('login_enqueue_scripts', [$this, 'enqueueLoginAssets']);
         add_action('login_footer', [$this, 'renderMarketingThemeSwitch']);
+        add_filter('login_message', [$this, 'renderCustomLoginTemplate']);
         add_filter('login_body_class', [$this, 'addBodyClass']);
         add_filter('login_headerurl', [$this, 'filterHeaderUrl']);
         add_filter('login_headertext', [$this, 'filterHeaderText']);
@@ -44,6 +45,12 @@ final class LoginExperienceHooks implements HookSubscriberInterface {
             'aix-live-login',
             AIX_LIVE_URL . 'assets/css/aix-live-login.css',
             [],
+            AIX_LIVE_VERSION
+        );
+        wp_enqueue_style(
+            'aix-live-login-template',
+            AIX_LIVE_URL . 'templates/login/styles.css',
+            ['aix-live-login'],
             AIX_LIVE_VERSION
         );
         wp_enqueue_script(
@@ -90,6 +97,33 @@ final class LoginExperienceHooks implements HookSubscriberInterface {
             get_bloginfo('name'),
             __('ainatrix live', 'ainatrix')
         );
+    }
+
+    /**
+     * Injecte un bloc de formulaire personnalisé avant le formulaire natif.
+     */
+    public function renderCustomLoginTemplate(string $message): string {
+        if (!$this->isStandardLoginAction()) {
+            return $message;
+        }
+
+        $templatePath = AIX_LIVE_PLUGIN_DIR . 'templates/login/form.php';
+        if (!is_readable($templatePath)) {
+            return $message;
+        }
+
+        $context = [
+            'brand'       => __('AINATRIX', 'ainatrix'),
+            'headline'    => __('Espace client sécurisé', 'ainatrix'),
+            'description' => __('Connectez-vous pour gérer vos publications sociales et accélérer votre croissance.', 'ainatrix'),
+            'badge'       => __('Marketing Automation', 'ainatrix'),
+        ];
+
+        ob_start();
+        include $templatePath;
+        $template = (string) ob_get_clean();
+
+        return $template . $message;
     }
 
     /**
