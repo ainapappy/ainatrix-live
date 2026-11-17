@@ -7,10 +7,6 @@ jQuery(function ($) {
   var $body = $('body.login');
   var $forms = $('#aix_live_login_form, #loginform, #lostpasswordform, #registerform, #resetpassform');
   var storageKey = 'aix_live_login_theme';
-  var themeData = window.aixLiveLogin && window.aixLiveLogin.theme ? window.aixLiveLogin.theme : {};
-  var toggleLabel = themeData.toggleLabel || 'Basculer le thème';
-  var darkLabel = themeData.dark || 'Dark';
-  var lightLabel = themeData.light || 'Light';
   if (!$forms.length) { return; }
 
   $forms.find('input.input, input[type="text"], input[type="password"], input[type="email"]')
@@ -39,8 +35,6 @@ jQuery(function ($) {
   var applyTheme = function (theme) {
     var isLight = theme === 'light';
     $body.toggleClass('aix-theme-light', isLight);
-    $switch.find('.aix-login-theme-switch__label').text(isLight ? lightLabel : darkLabel);
-    $switch.attr('aria-label', toggleLabel);
     $switch.attr('aria-pressed', isLight ? 'true' : 'false');
   };
 

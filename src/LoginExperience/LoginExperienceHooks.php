@@ -66,13 +66,6 @@ final class LoginExperienceHooks implements HookSubscriberInterface {
             AIX_LIVE_VERSION,
             true
         );
-        wp_localize_script('aix-live-login', 'aixLiveLogin', [
-            'theme' => [
-                'toggleLabel' => __('Basculer le thème', 'ainatrix'),
-                'dark'        => __('Dark', 'ainatrix'),
-                'light'       => __('Light', 'ainatrix'),
-            ],
-        ]);
     }
 
     /**
@@ -156,13 +149,18 @@ final class LoginExperienceHooks implements HookSubscriberInterface {
     }
 
     /**
-     * Rend le switch de thème en bas de page login.
+     * Rend le switch de thème en haut à droite de la page login : bouton rond
+     * icône (lune visible en thème clair, soleil en thème sombre — même
+     * sémantique que le composant dark-mode-toggle-comp du thème).
+     * aria-live retiré : plus aucun texte ne change dans le bouton, l'état
+     * est porté par aria-pressed (mis à jour par aix-live-login.js).
      */
     public function renderMarketingThemeSwitch(): void {
-        echo '<button type="button" class="aix-login-theme-switch" data-aix-theme-switch aria-live="polite" aria-label="';
+        echo '<button type="button" class="aix-login-theme-switch" data-aix-theme-switch aria-pressed="false" aria-label="';
         echo esc_attr__('Basculer le thème', 'ainatrix');
         echo '">';
-        echo '<span class="aix-login-theme-switch__label">' . esc_html__('Dark', 'ainatrix') . '</span>';
+        echo '<svg class="aix-login-theme-switch__moon" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>';
+        echo '<svg class="aix-login-theme-switch__sun" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707-.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>';
         echo '</button>';
     }
 
