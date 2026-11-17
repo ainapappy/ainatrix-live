@@ -23,6 +23,7 @@ final class LoginExperienceHooks implements HookSubscriberInterface {
 
     public function register(): void {
         add_action('login_enqueue_scripts', [$this, 'enqueueLoginAssets']);
+        add_action('login_footer', [$this, 'renderMarketingThemeSwitch']);
         add_filter('login_body_class', [$this, 'addBodyClass']);
         add_filter('login_headerurl', [$this, 'filterHeaderUrl']);
         add_filter('login_headertext', [$this, 'filterHeaderText']);
@@ -52,6 +53,13 @@ final class LoginExperienceHooks implements HookSubscriberInterface {
             AIX_LIVE_VERSION,
             true
         );
+        wp_localize_script('aix-live-login', 'aixLiveLogin', [
+            'theme' => [
+                'toggleLabel' => __('Basculer le thème', 'ainatrix'),
+                'dark'        => __('Dark', 'ainatrix'),
+                'light'       => __('Light', 'ainatrix'),
+            ],
+        ]);
     }
 
     /**
@@ -93,6 +101,17 @@ final class LoginExperienceHooks implements HookSubscriberInterface {
             __('Connexion sécurisée', 'ainatrix'),
             get_bloginfo('name')
         );
+    }
+
+    /**
+     * Rend le switch de thème en bas de page login.
+     */
+    public function renderMarketingThemeSwitch(): void {
+        echo '<button type="button" class="aix-login-theme-switch" data-aix-theme-switch aria-live="polite" aria-label="';
+        echo esc_attr__('Basculer le thème', 'ainatrix');
+        echo '">';
+        echo '<span class="aix-login-theme-switch__label">' . esc_html__('Dark', 'ainatrix') . '</span>';
+        echo '</button>';
     }
 
     /**
